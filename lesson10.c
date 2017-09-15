@@ -185,10 +185,10 @@ void move_logic(void)
 	collisionBot = 0;
 	// we want to find which metatile in the collision map this point is in...is it solid?
 	collision_Index = (((char)Scroll_Adjusted_X >> 4) + ((Y1 + 16) & 0xf0)); //bottom left
-	Collision_Down();	
-	collisionBot+=collision;											  // if on platform, ++collision
+	Collision_Down();
+	collisionBot += collision;										  // if on platform, ++collision
 	collision_Index = (((char)Scroll_Adjusted_X >> 4) + ((Y1)&0xf0)); //top left
-	Collision_Down();	
+	Collision_Down();
 	NametableB = Nametable;
 	Scroll_Adjusted_X = (X1 + Horiz_scroll + 13); // left
 	high_byte = Scroll_Adjusted_X >> 8;
@@ -197,19 +197,23 @@ void move_logic(void)
 		++NametableB;	// the other nametable's collision map
 		NametableB &= 1; // keep it 0 or 1
 	}
+	collisionOld = collision;
+	collision = 0;
 	// we want to find which metatile in the collision map this point is in...is it solid?
 	collision_Index = (((char)Scroll_Adjusted_X >> 4) + ((Y1 + 16) & 0xf0)); //bottom right
-	Collision_Down();												  // if on platform, ++collision
-	collisionBot+=collision;
+	Collision_Down();														 // if on platform, ++collision
+	collisionBot += collision;
+	collision = collisionOld+collision;
 	collision_Index = (((char)Scroll_Adjusted_X >> 4) + ((Y1)&0xf0)); //top right
-	Collision_Down();											  // if on platform, ++collision
-	if (collision >= 50) {
+	Collision_Down();												  // if on platform, ++collision
+	if (collision >= 50)
+	{
 		X1 = 0x80;
 		Y1 = 0x70;
 		Horiz_scroll = 0;
 		NametableB = Nametable;
 		return;
-	}													 // if on platform, ++collision
+	} // if on platform, ++collision
 	if (Y_speed >= 0)
 	{
 		if ((Y1 & 0x0f) > 1) // only platform collide if nearly aligned to a metatile
@@ -228,7 +232,7 @@ void move_logic(void)
 	else
 	{
 		Y_speed += 4;
-		if (collisionBot < 5 && collisionBot > 0)
+		if (collision < 5 && collision > 0)
 		{
 			Y_speed = 1;
 		}
@@ -267,7 +271,7 @@ void move_logic(void)
 		Horiz_scroll += (X_speed >> 4); // use the high nibble
 		// which nametable am I in?
 		NametableB = Nametable;
-		Scroll_Adjusted_X = (X1 + Horiz_scroll + (X_speed < 0 ? 2 : 12)); // left
+		Scroll_Adjusted_X = (X1 + Horiz_scroll + (X_speed < 0 ? 3 : 13)); // left
 		high_byte = Scroll_Adjusted_X >> 8;
 		if (high_byte != 0)
 		{					 // if H scroll + Sprite X > 255, then we should use
@@ -276,24 +280,29 @@ void move_logic(void)
 		}
 		// we want to find which metatile in the collision map this point is in...is it solid?
 		collision = 0;																				  // if on platform, ++collision
-		collision_Index = (((char)Scroll_Adjusted_X >> 4) + ((Y1 + (Y_speed <= 0 ? 8 : 16)) & 0xf0)); //top left if on ground / falling, bottom left if in air
+		collision_Index = (((char)Scroll_Adjusted_X >> 4) + ((Y1 + (Y_speed <= 0 ? 15 : 16)) & 0xf0)); //top left if on ground / falling, bottom left if in air
 		Collision_Down();
-		if (collision > 0)
+		collision_Index = (((char)Scroll_Adjusted_X >> 4) + ((Y1) & 0xf0)); //top left if on ground / falling, bottom left if in air
+		Collision_Down();
+		if (collision < 5 && collision > 0)
 		{
 			Horiz_scroll = Horiz_scroll_Old;
 			X_speed = 0;
 		}
-		if (X_speed >= 0)
-		{										 // going right
-			if (Horiz_scroll_Old > Horiz_scroll) // if pass 0, switch nametables
-				++Nametable;
-		}
 		else
-		{ // going left
-			if (Horiz_scroll_Old < Horiz_scroll)
-				++Nametable; // if pass 0, switch nametables
+		{
+			if (X_speed >= 0)
+			{										 // going right
+				if (Horiz_scroll_Old > Horiz_scroll) // if pass 0, switch nametables
+					++Nametable;
+			}
+			else
+			{ // going left
+				if (Horiz_scroll_Old < Horiz_scroll)
+					++Nametable; // if pass 0, switch nametables
+			}
+			Nametable &= 1; // keep it 1 or 0
 		}
-		Nametable &= 1; // keep it 1 or 0
 	}
 	Y1 += (Y_speed >> 4); // use the high nibble
 

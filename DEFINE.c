@@ -53,6 +53,7 @@ unsigned char collision_Index;
 unsigned char high_byte;
 unsigned char collision;
 unsigned char collisionBot;
+unsigned char collisionOld;
 unsigned char temp;
 
 
