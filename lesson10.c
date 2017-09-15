@@ -194,17 +194,43 @@ void move_logic(void)
 		++NametableB;	// the other nametable's collision map
 		NametableB &= 1; // keep it 0 or 1
 	}
-	collision_Index = (((char)Scroll_Adjusted_X >> 4) + ((Y1 + 16) & 0xf0)); // bottom right
+	collision_Index = (((char)Scroll_Adjusted_X >> 4) + ((Y1+ 16) & 0xf0)); // bottom right
 	Collision_Down();														 // if on platform, ++collision
+// first check the bottom top corner of character
+	// which nametable am I in?
+	NametableB = Nametable;
+	Scroll_Adjusted_X = (X1 + Horiz_scroll + 3); // left
+	high_byte = Scroll_Adjusted_X >> 8;
+	if (high_byte != 0)
+	{					 // if H scroll + Sprite X > 255, then we should use
+		++NametableB;	// the other nametable's collision map
+		NametableB &= 1; // keep it 0 or 1
+	}
+	// we want to find which metatile in the collision map this point is in...is it solid?
+	collision_Index = (((char)Scroll_Adjusted_X >> 4) + ((Y1) & 0xf0));
+	collision = 0;
+	Collision_Down(); // if on platform, ++collision
 
-	if ((Y1 & 0x0f) > 1) // only platform collide if nearly aligned to a metatile
-		collision = 0;
+	// now check the bottom right corner of character
+	// which nametable am I in?
+	NametableB = Nametable;
+	Scroll_Adjusted_X = (X1 + Horiz_scroll + 12);
+	high_byte = Scroll_Adjusted_X >> 8;
+	if (high_byte != 0)
+	{					 // if H scroll + Sprite X > 255, then we should use
+		++NametableB;	// the other nametable's collision map
+		NametableB &= 1; // keep it 0 or 1
+	}
+	collision_Index = (((char)Scroll_Adjusted_X >> 4) + ((Y1 + 16) & 0xf0)); // top right
+	Collision_Down();	
+	// if ((Y1 & 0x0f) > 1) // only platform collide if nearly aligned to a metatile
+	// 	collision = 0;
 
 	if (collision == 0)
 	{
 		Y_speed += 4; // gravity
 	}
-	else
+	else 
 	{
 		Y_speed = 0; // collision = stop falling
 		Y1 &= 0xf0;  // align to the metatile
