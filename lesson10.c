@@ -182,9 +182,11 @@ void move_logic(void)
 		NametableB &= 1; // keep it 0 or 1
 	}
 	collision = 0;
+	collisionBot = 0;
 	// we want to find which metatile in the collision map this point is in...is it solid?
 	collision_Index = (((char)Scroll_Adjusted_X >> 4) + ((Y1 + 16) & 0xf0)); //bottom left
-	Collision_Down();												  // if on platform, ++collision
+	Collision_Down();	
+	collisionBot+=collision;											  // if on platform, ++collision
 	collision_Index = (((char)Scroll_Adjusted_X >> 4) + ((Y1)&0xf0)); //top left
 	Collision_Down();	
 	NametableB = Nametable;
@@ -198,20 +200,22 @@ void move_logic(void)
 	// we want to find which metatile in the collision map this point is in...is it solid?
 	collision_Index = (((char)Scroll_Adjusted_X >> 4) + ((Y1 + 16) & 0xf0)); //bottom right
 	Collision_Down();												  // if on platform, ++collision
+	collisionBot+=collision;
 	collision_Index = (((char)Scroll_Adjusted_X >> 4) + ((Y1)&0xf0)); //top right
 	Collision_Down();											  // if on platform, ++collision
 	if (collision >= 50) {
 		X1 = 0x80;
 		Y1 = 0x70;
 		Horiz_scroll = 0;
+		NametableB = Nametable;
 		return;
 	}													 // if on platform, ++collision
 	if (Y_speed >= 0)
 	{
 		if ((Y1 & 0x0f) > 1) // only platform collide if nearly aligned to a metatile
-			collision = 0;
+			collisionBot = 0;
 
-		if (collision == 0)
+		if (collisionBot == 0)
 		{
 			Y_speed += 4; // gravity
 		}
@@ -224,7 +228,7 @@ void move_logic(void)
 	else
 	{
 		Y_speed += 4;
-		if (collision < 5 && collision > 0)
+		if (collisionBot < 5 && collisionBot > 0)
 		{
 			Y_speed = 1;
 		}

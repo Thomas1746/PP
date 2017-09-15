@@ -52,6 +52,7 @@ unsigned char direction; // 0 = R, 1 = L
 unsigned char collision_Index;
 unsigned char high_byte;
 unsigned char collision;
+unsigned char collisionBot;
 unsigned char temp;
 
 
