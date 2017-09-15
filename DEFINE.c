@@ -79,8 +79,8 @@ const unsigned char HUD2[] = {"LIVES:"};
 // now their value is 0-11, which will index to this array...
 
 const unsigned char PLATFORM[]={ // which metatiles act like platforms
-	0, 1, 1, 1, 1, 1, 
-	0, 0, 0, 0, 0, 0, 0};
+	0, 1, 1, 5, 5, 5, 
+	0, 0, 0, 0, 0, 0, 50};
 
 const unsigned char PALETTE[]={
 0x22, 0x16, 0x36, 0x0f,  0, 8, 0x18, 0x39,  0, 0, 0x10, 0x20,  0, 0x0a, 0x1a, 0x2a,

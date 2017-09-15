@@ -535,7 +535,7 @@ _C1:
 	.byte	$01
 	.byte	$01
 	.byte	$01
-	.byte	$00
+	.byte	$0C
 	.byte	$01
 	.byte	$01
 	.byte	$01
@@ -969,16 +969,16 @@ _PLATFORM:
 	.byte	$00
 	.byte	$01
 	.byte	$01
-	.byte	$01
-	.byte	$01
-	.byte	$01
+	.byte	$05
+	.byte	$05
+	.byte	$05
 	.byte	$00
 	.byte	$00
 	.byte	$00
 	.byte	$00
 	.byte	$00
 	.byte	$00
-	.byte	$00
+	.byte	$32
 _PALETTE:
 	.byte	$22
 	.byte	$16
@@ -1203,7 +1203,7 @@ _C_MAP2:
 	lda     #$00
 	sta     $2000
 ;
-; PPU_MASK = 0; 
+; PPU_MASK = 0;
 ;
 	sta     $2001
 ;
@@ -1229,12 +1229,12 @@ _C_MAP2:
 	lda     #$90
 	sta     $2000
 ;
-; PPU_MASK = 0x1e; 
+; PPU_MASK = 0x1e;
 ;
 	lda     #$1E
 	sta     $2001
 ;
-; }  
+; }
 ;
 	rts
 
@@ -1295,12 +1295,12 @@ _C_MAP2:
 	lda     #$00
 	sta     $2006
 ;
-; for( index = 0; index < sizeof(PALETTE); ++index ){
+; for (index = 0; index < sizeof(PALETTE); ++index)
 ;
 	sta     _index
-L060E:	lda     _index
+L0619:	lda     _index
 	cmp     #$20
-	bcs     L05AF
+	bcs     L05BA
 ;
 ; PPU_DATA = PALETTE[index];
 ;
@@ -1308,14 +1308,14 @@ L060E:	lda     _index
 	lda     _PALETTE,y
 	sta     $2007
 ;
-; for( index = 0; index < sizeof(PALETTE); ++index ){
+; for (index = 0; index < sizeof(PALETTE); ++index)
 ;
 	inc     _index
-	jmp     L060E
+	jmp     L0619
 ;
 ; }
 ;
-L05AF:	rts
+L05BA:	rts
 
 .endproc
 
@@ -1345,14 +1345,14 @@ L05AF:	rts
 ; if (direction == 0)
 ;
 	lda     _direction
-	jne     L0616
+	jne     L0621
 ;
 ; for (index = 0; index < 4; ++index)
 ;
 	sta     _index
-L0615:	lda     _index
+L0620:	lda     _index
 	cmp     #$04
-	bcc     L0618
+	bcc     L0623
 ;
 ; }
 ;
@@ -1360,7 +1360,7 @@ L0615:	lda     _index
 ;
 ; SPRITES[index4] = MetaSprite_Y[index] + Y1; // relative y + master y
 ;
-L0618:	lda     #<(_SPRITES)
+L0623:	lda     #<(_SPRITES)
 	ldx     #>(_SPRITES)
 	clc
 	adc     _index4
@@ -1393,9 +1393,9 @@ L0439:	sta     sreg
 	lda     _index
 	clc
 	adc     _state4
-	bcc     L0610
+	bcc     L061B
 	inx
-L0610:	sta     ptr1
+L061B:	sta     ptr1
 	txa
 	clc
 	adc     #>(_MetaSprite_Tile_R)
@@ -1452,15 +1452,15 @@ L0446:	sta     ptr1
 ; for (index = 0; index < 4; ++index)
 ;
 	inc     _index
-	jmp     L0615
+	jmp     L0620
 ;
 ; for (index = 0; index < 4; ++index)
 ;
-L0616:	lda     #$00
+L0621:	lda     #$00
 	sta     _index
-L0617:	lda     _index
+L0622:	lda     _index
 	cmp     #$04
-	bcc     L0619
+	bcc     L0624
 ;
 ; }
 ;
@@ -1468,7 +1468,7 @@ L0617:	lda     _index
 ;
 ; SPRITES[index4] = MetaSprite_Y[index] + Y1; // relative y + master y
 ;
-L0619:	lda     #<(_SPRITES)
+L0624:	lda     #<(_SPRITES)
 	ldx     #>(_SPRITES)
 	clc
 	adc     _index4
@@ -1501,9 +1501,9 @@ L045D:	sta     sreg
 	lda     _index
 	clc
 	adc     _state4
-	bcc     L0613
+	bcc     L061E
 	inx
-L0613:	sta     ptr1
+L061E:	sta     ptr1
 	txa
 	clc
 	adc     #>(_MetaSprite_Tile_L)
@@ -1560,7 +1560,7 @@ L046A:	sta     ptr1
 ; for (index = 0; index < 4; ++index)
 ;
 	inc     _index
-	jmp     L0617
+	jmp     L0622
 
 .endproc
 
@@ -1587,13 +1587,13 @@ L046A:	sta     ptr1
 ;
 ; else
 ;
-	jmp     L061F
+	jmp     L062A
 ;
 ; temp = C_MAP2[collision_Index];
 ;
 L0470:	ldy     _collision_Index
 	lda     _C_MAP2,y
-L061F:	sta     _temp
+L062A:	sta     _temp
 ;
 ; collision += PLATFORM[temp];
 ;
@@ -1624,7 +1624,7 @@ L061F:	sta     _temp
 ;
 	lda     _joypad1
 	and     #$03
-	bne     L0630
+	bne     L0639
 ;
 ; walk_count = 0;
 ;
@@ -1644,7 +1644,7 @@ L061F:	sta     _temp
 	eor     #$80
 L0491:	asl     a
 	lda     #$00
-	bcc     L062F
+	bcc     L0638
 ;
 ; X_speed -= 4;
 ;
@@ -1652,11 +1652,11 @@ L0491:	asl     a
 	sec
 	sbc     #$04
 	sta     _X_speed
-	bpl     L0630
+	bpl     L0639
 ;
 ; else
 ;
-	jmp     L0630
+	jmp     L0639
 ;
 ; if (X_speed <= (-4))
 ;
@@ -1667,7 +1667,7 @@ L048B:	lda     _X_speed
 	eor     #$80
 L049D:	asl     a
 	lda     #$00
-	bcc     L062F
+	bcc     L0638
 ;
 ; X_speed += 4;
 ;
@@ -1675,21 +1675,21 @@ L049D:	asl     a
 	clc
 	adc     _X_speed
 	sta     _X_speed
-	bpl     L0630
+	bpl     L0639
 ;
 ; else
 ;
-	jmp     L0630
+	jmp     L0639
 ;
 ; X_speed = 0;
 ;
-L062F:	sta     _X_speed
+L0638:	sta     _X_speed
 ;
 ; if ((joypad1 & RIGHT) != 0)
 ;
-L0630:	lda     _joypad1
+L0639:	lda     _joypad1
 	and     #$01
-	beq     L0631
+	beq     L063A
 ;
 ; ++walk_count;
 ;
@@ -1711,11 +1711,11 @@ L0630:	lda     _joypad1
 	clc
 	adc     _X_speed
 	sta     _X_speed
-	bpl     L0631
+	bpl     L063A
 ;
 ; else
 ;
-	jmp     L0631
+	jmp     L063A
 ;
 ; X_speed += 8; // double friction
 ;
@@ -1726,9 +1726,9 @@ L04AB:	lda     #$08
 ;
 ; if ((joypad1 & LEFT) != 0)
 ;
-L0631:	lda     _joypad1
+L063A:	lda     _joypad1
 	and     #$02
-	beq     L0633
+	beq     L063C
 ;
 ; ++walk_count;
 ;
@@ -1746,7 +1746,7 @@ L0631:	lda     _joypad1
 	sbc     #$01
 	bvc     L04BF
 	eor     #$80
-L04BF:	bpl     L0632
+L04BF:	bpl     L063B
 ;
 ; X_speed -= 2;
 ;
@@ -1754,22 +1754,22 @@ L04BF:	bpl     L0632
 	sec
 	sbc     #$02
 	sta     _X_speed
-	bpl     L0633
+	bpl     L063C
 ;
 ; else
 ;
-	jmp     L0633
+	jmp     L063C
 ;
 ; X_speed -= 8; // double friction
 ;
-L0632:	lda     _X_speed
+L063B:	lda     _X_speed
 	sec
 	sbc     #$08
 	sta     _X_speed
 ;
 ; NametableB = Nametable;
 ;
-L0633:	lda     _Nametable
+L063C:	lda     _Nametable
 	sta     _NametableB
 ;
 ; Scroll_Adjusted_X = (X1 + Horiz_scroll + 3); // left
@@ -1778,10 +1778,10 @@ L0633:	lda     _Nametable
 	lda     _X1
 	clc
 	adc     _Horiz_scroll
-	bcc     L0628
+	bcc     L0634
 	inx
 	clc
-L0628:	adc     #$03
+L0634:	adc     #$03
 	bcc     L04CC
 	inx
 L04CC:	sta     _Scroll_Adjusted_X
@@ -1795,7 +1795,7 @@ L04CC:	sta     _Scroll_Adjusted_X
 ; if (high_byte != 0)
 ;
 	lda     _high_byte
-	beq     L0634
+	beq     L063D
 ;
 ; ++NametableB; // the other nametable's collision map
 ;
@@ -1807,9 +1807,9 @@ L04CC:	sta     _Scroll_Adjusted_X
 	and     #$01
 	sta     _NametableB
 ;
-; collision_Index = (((char)Scroll_Adjusted_X >> 4) + ((Y1 + 16) & 0xf0));
+; collision_Index = (((char)Scroll_Adjusted_X >> 4) + ((Y1 + 16) & 0xf0)); //bottom left
 ;
-L0634:	lda     _Scroll_Adjusted_X
+L063D:	lda     _Scroll_Adjusted_X
 	lsr     a
 	lsr     a
 	lsr     a
@@ -1828,53 +1828,13 @@ L0634:	lda     _Scroll_Adjusted_X
 	lda     #$00
 	sta     _collision
 ;
-; Collision_Down(); // if on platform, ++collision
+; Collision_Down();              // if on platform, ++collision
 ;
 	jsr     _Collision_Down
 ;
-; NametableB = Nametable;
+; collision_Index = (((char)Scroll_Adjusted_X >> 4) + ((Y1)&0xf0)); //top left
 ;
-	lda     _Nametable
-	sta     _NametableB
-;
-; Scroll_Adjusted_X = (X1 + Horiz_scroll + 12);
-;
-	ldx     #$00
-	lda     _X1
-	clc
-	adc     _Horiz_scroll
-	bcc     L0629
-	inx
-	clc
-L0629:	adc     #$0C
-	bcc     L04E3
-	inx
-L04E3:	sta     _Scroll_Adjusted_X
-	stx     _Scroll_Adjusted_X+1
-;
-; high_byte = Scroll_Adjusted_X >> 8;
-;
-	lda     _Scroll_Adjusted_X+1
-	sta     _high_byte
-;
-; if (high_byte != 0)
-;
-	lda     _high_byte
-	beq     L0635
-;
-; ++NametableB; // the other nametable's collision map
-;
-	inc     _NametableB
-;
-; NametableB &= 1; // keep it 0 or 1
-;
-	lda     _NametableB
-	and     #$01
-	sta     _NametableB
-;
-; collision_Index = (((char)Scroll_Adjusted_X >> 4) + ((Y1) & 0xf0)); // bottom right
-;
-L0635:	lda     _Scroll_Adjusted_X
+	lda     _Scroll_Adjusted_X
 	lsr     a
 	lsr     a
 	lsr     a
@@ -1886,137 +1846,47 @@ L0635:	lda     _Scroll_Adjusted_X
 	adc     ptr1
 	sta     _collision_Index
 ;
-; Collision_Down();               // if on platform, ++collision
+; Collision_Down();              // if on platform, ++collision
 ;
 	jsr     _Collision_Down
 ;
-; NametableB = Nametable;
+; if (collision >= 50) {
 ;
-	lda     _Nametable
-	sta     _NametableB
+	lda     _collision
+	cmp     #$32
+	bcc     L063E
 ;
-; Scroll_Adjusted_X = (X1 + Horiz_scroll + 3); // left
+; X1 = 0x80;
 ;
-	ldx     #$00
-	lda     _X1
-	clc
-	adc     _Horiz_scroll
-	bcc     L062A
-	inx
-	clc
-L062A:	adc     #$03
-	bcc     L04F7
-	inx
-L04F7:	sta     _Scroll_Adjusted_X
-	stx     _Scroll_Adjusted_X+1
+	lda     #$80
+	sta     _X1
 ;
-; high_byte = Scroll_Adjusted_X >> 8;
+; Y1 = 0x70;
 ;
-	lda     _Scroll_Adjusted_X+1
-	sta     _high_byte
+	lda     #$70
+	sta     _Y1
 ;
-; if (high_byte != 0)
+; if (Y_speed >= 0)
 ;
-	lda     _high_byte
-	beq     L0636
+L063E:	ldx     _Y_speed
+	bmi     L04EB
 ;
-; ++NametableB; // the other nametable's collision map
+; if ((Y1 & 0x0f) > 1) // only platform collide if nearly aligned to a metatile
 ;
-	inc     _NametableB
-;
-; NametableB &= 1; // keep it 0 or 1
-;
-	lda     _NametableB
-	and     #$01
-	sta     _NametableB
-;
-; collision_Index = (((char)Scroll_Adjusted_X >> 4) + ((Y1) & 0xf0));
-;
-L0636:	lda     _Scroll_Adjusted_X
-	lsr     a
-	lsr     a
-	lsr     a
-	lsr     a
-	sta     ptr1
 	lda     _Y1
-	and     #$F0
-	clc
-	adc     ptr1
-	sta     _collision_Index
+	and     #$0F
+	cmp     #$02
+	bcc     L063F
 ;
 ; collision = 0;
 ;
 	lda     #$00
 	sta     _collision
-;
-; Collision_Down(); // if on platform, ++collision
-;
-	jsr     _Collision_Down
-;
-; NametableB = Nametable;
-;
-	lda     _Nametable
-	sta     _NametableB
-;
-; Scroll_Adjusted_X = (X1 + Horiz_scroll + 12);
-;
-	ldx     #$00
-	lda     _X1
-	clc
-	adc     _Horiz_scroll
-	bcc     L062B
-	inx
-	clc
-L062B:	adc     #$0C
-	bcc     L050D
-	inx
-L050D:	sta     _Scroll_Adjusted_X
-	stx     _Scroll_Adjusted_X+1
-;
-; high_byte = Scroll_Adjusted_X >> 8;
-;
-	lda     _Scroll_Adjusted_X+1
-	sta     _high_byte
-;
-; if (high_byte != 0)
-;
-	lda     _high_byte
-	beq     L0637
-;
-; ++NametableB; // the other nametable's collision map
-;
-	inc     _NametableB
-;
-; NametableB &= 1; // keep it 0 or 1
-;
-	lda     _NametableB
-	and     #$01
-	sta     _NametableB
-;
-; collision_Index = (((char)Scroll_Adjusted_X >> 4) + ((Y1 + 16) & 0xf0)); // bottom right
-;
-L0637:	lda     _Scroll_Adjusted_X
-	lsr     a
-	lsr     a
-	lsr     a
-	lsr     a
-	sta     ptr1
-	lda     _Y1
-	clc
-	adc     #$10
-	and     #$F0
-	clc
-	adc     ptr1
-	sta     _collision_Index
-;
-; Collision_Down(); 
-;
-	jsr     _Collision_Down
 ;
 ; if (collision == 0)
 ;
-	lda     _collision
-	bne     L0638
+L063F:	lda     _collision
+	bne     L0640
 ;
 ; Y_speed += 4; // gravity
 ;
@@ -2024,15 +1894,15 @@ L0637:	lda     _Scroll_Adjusted_X
 	clc
 	adc     _Y_speed
 	sta     _Y_speed
-	bpl     L0639
+	bpl     L0644
 ;
-; else 
+; else
 ;
-	jmp     L0639
+	jmp     L0644
 ;
 ; Y_speed = 0; // collision = stop falling
 ;
-L0638:	lda     #$00
+L0640:	lda     #$00
 	sta     _Y_speed
 ;
 ; Y1 &= 0xf0;  // align to the metatile
@@ -2041,38 +1911,62 @@ L0638:	lda     #$00
 	and     #$F0
 	sta     _Y1
 ;
+; else
+;
+	jmp     L0644
+;
+; Y_speed += 4;
+;
+L04EB:	lda     #$04
+	clc
+	adc     _Y_speed
+	sta     _Y_speed
+;
+; if (collision < 5 && collision > 0)
+;
+	lda     _collision
+	cmp     #$05
+	bcs     L0644
+	lda     _collision
+	beq     L0644
+;
+; Y_speed = 1;
+;
+	lda     #$01
+	sta     _Y_speed
+;
 ; if (collision > 0)
 ;
-L0639:	lda     _collision
-	beq     L063D
+L0644:	lda     _collision
+	beq     L0648
 ;
 ; if (((joypad1 & A_BUTTON) != 0) && ((joypad1old & A_BUTTON) == 0))
 ;
 	lda     _joypad1
 	and     #$80
-	beq     L063D
+	beq     L0648
 	lda     _joypad1old
 	and     #$80
-	bne     L063D
+	bne     L0648
 ;
-; Y_speed = -0x38; // 0xc8
+; Y_speed = -0x48; // 0xc8
 ;
-	lda     #$C8
+	lda     #$B8
 	sta     _Y_speed
 ;
 ; if (X_speed >= 0)
 ;
-L063D:	ldx     _X_speed
-	bmi     L0535
+L0648:	ldx     _X_speed
+	bmi     L0515
 ;
 ; if (X_speed > 0x20)
 ;
 	lda     _X_speed
 	sec
 	sbc     #$21
-	bvs     L053B
+	bvs     L051B
 	eor     #$80
-L053B:	bpl     L063E
+L051B:	bpl     L0649
 ;
 ; X_speed = 0x20;
 ;
@@ -2080,98 +1974,199 @@ L053B:	bpl     L063E
 ;
 ; else
 ;
-	jmp     L0626
+	jmp     L0632
 ;
 ; if (X_speed < (-0x20))
 ;
-L0535:	lda     _X_speed
+L0515:	lda     _X_speed
 	sec
 	sbc     #$E0
-	bvc     L0543
+	bvc     L0523
 	eor     #$80
-L0543:	bpl     L063E
+L0523:	bpl     L0649
 ;
 ; X_speed = (-0x20); // 0xe0
 ;
 	lda     #$E0
-L0626:	sta     _X_speed
+L0632:	sta     _X_speed
 ;
 ; if (Y_speed >= 0)
 ;
-L063E:	ldx     _Y_speed
-	bmi     L063F
+L0649:	ldx     _Y_speed
+	bmi     L064A
 ;
 ; if (Y_speed > 0x20)
 ;
 	lda     _Y_speed
 	sec
 	sbc     #$21
-	bvs     L054D
+	bvs     L052D
 	eor     #$80
-L054D:	bpl     L063F
+L052D:	bpl     L064A
 ;
 ; Y_speed = 0x20;
 ;
 	lda     #$20
 	sta     _Y_speed
 ;
+; if (X_speed != 0)
+;
+L064A:	lda     _X_speed
+	jeq     L0530
+;
 ; Horiz_scroll_Old = Horiz_scroll;
 ;
-L063F:	lda     _Horiz_scroll
+	lda     _Horiz_scroll
 	sta     _Horiz_scroll_Old
 ;
 ; Horiz_scroll += (X_speed >> 4); // use the high nibble
 ;
 	ldx     #$00
 	lda     _X_speed
-	bpl     L0555
+	bpl     L0538
 	dex
-L0555:	jsr     asrax4
+L0538:	jsr     asrax4
 	clc
 	adc     _Horiz_scroll
 	sta     _Horiz_scroll
 ;
+; NametableB = Nametable;
+;
+	lda     _Nametable
+	sta     _NametableB
+;
+; Scroll_Adjusted_X = (X1 + Horiz_scroll + (X_speed < 0 ? 2 : 12)); // left
+;
+	ldx     #$00
+	lda     _X1
+	clc
+	adc     _Horiz_scroll
+	bcc     L062C
+	inx
+L062C:	sta     ptr1
+	stx     ptr1+1
+	lda     _X_speed
+	asl     a
+	bcc     L064B
+	lda     #$02
+	jmp     L0542
+L064B:	lda     #$0C
+L0542:	clc
+	adc     ptr1
+	ldx     ptr1+1
+	bcc     L062D
+	inx
+L062D:	sta     _Scroll_Adjusted_X
+	stx     _Scroll_Adjusted_X+1
+;
+; high_byte = Scroll_Adjusted_X >> 8;
+;
+	lda     _Scroll_Adjusted_X+1
+	sta     _high_byte
+;
+; if (high_byte != 0)
+;
+	lda     _high_byte
+	beq     L064D
+;
+; ++NametableB; // the other nametable's collision map
+;
+	inc     _NametableB
+;
+; NametableB &= 1; // keep it 0 or 1
+;
+	lda     _NametableB
+	and     #$01
+	sta     _NametableB
+;
+; collision = 0;                      // if on platform, ++collision
+;
+	lda     #$00
+L064D:	sta     _collision
+;
+; collision_Index = (((char)Scroll_Adjusted_X >> 4) + ((Y1 + (Y_speed <= 0 ? 8 : 16)) & 0xf0)); //top left if on ground / falling, bottom left if in air
+;
+	lda     _Scroll_Adjusted_X
+	lsr     a
+	lsr     a
+	lsr     a
+	lsr     a
+	sta     ptr1
+	lda     _Y_speed
+	sec
+	sbc     #$01
+	bvc     L0555
+	eor     #$80
+L0555:	bpl     L064E
+	lda     #$08
+	jmp     L0558
+L064E:	lda     #$10
+L0558:	clc
+	adc     _Y1
+	and     #$F0
+	clc
+	adc     ptr1
+	sta     _collision_Index
+;
+; Collision_Down();
+;
+	jsr     _Collision_Down
+;
+; if (collision > 0)
+;
+	lda     _collision
+	beq     L0650
+;
+; Horiz_scroll = Horiz_scroll_Old;
+;
+	lda     _Horiz_scroll_Old
+	sta     _Horiz_scroll
+;
+; X_speed = 0;
+;
+	lda     #$00
+	sta     _X_speed
+;
 ; if (X_speed >= 0)
 ;
-	ldx     _X_speed
-	bmi     L0556
+L0650:	ldx     _X_speed
+	bmi     L0561
 ;
 ; if (Horiz_scroll_Old > Horiz_scroll) // if pass 0, switch nametables
 ;
-	ldx     #$00
 	lda     _Horiz_scroll_Old
 	sec
 	sbc     _Horiz_scroll
-	bcc     L0640
-	beq     L0640
+	bcc     L0651
+	beq     L0651
 ;
 ; else
 ;
-	jmp     L0646
+	jmp     L0655
 ;
 ; if (Horiz_scroll_Old < Horiz_scroll)
 ;
-L0556:	ldx     #$00
-	lda     _Horiz_scroll_Old
+L0561:	lda     _Horiz_scroll_Old
 	cmp     _Horiz_scroll
-	bcs     L0640
+	bcs     L0651
 ;
 ; ++Nametable; // if pass 0, switch nametables
 ;
-L0646:	inc     _Nametable
+L0655:	inc     _Nametable
 ;
 ; Nametable &= 1; // keep it 1 or 0
 ;
-L0640:	lda     _Nametable
+L0651:	lda     _Nametable
 	and     #$01
 	sta     _Nametable
 ;
 ; Y1 += (Y_speed >> 4); // use the high nibble
 ;
+L0530:	ldx     #$00
 	lda     _Y_speed
-	bpl     L0565
+	bpl     L0570
 	dex
-L0565:	jsr     asrax4
+L0570:	jsr     asrax4
 	clc
 	adc     _Y1
 	sta     _Y1
@@ -2181,7 +2176,7 @@ L0565:	jsr     asrax4
 	lda     _walk_count
 	cmp     #$20
 	ldx     #$00
-	bcc     L0641
+	bcc     L0652
 ;
 ; walk_count = 0;
 ;
@@ -2189,7 +2184,7 @@ L0565:	jsr     asrax4
 ;
 ; state = Walk_Moves[(walk_count >> 3)]; // if not jumping
 ;
-L0641:	lda     _walk_count
+L0652:	lda     _walk_count
 	lsr     a
 	lsr     a
 	lsr     a
@@ -2206,7 +2201,7 @@ L0641:	lda     _walk_count
 ;
 	lda     _Y_speed
 	asl     a
-	bcc     L056E
+	bcc     L0579
 ;
 ; state = 3;
 ;
@@ -2215,7 +2210,7 @@ L0641:	lda     _walk_count
 ;
 ; }
 ;
-L056E:	rts
+L0579:	rts
 
 .endproc
 
@@ -2320,18 +2315,18 @@ L056E:	rts
 	lda     #$24
 	sta     $2006
 ;
-; PPU_ADDRESS = 0x64; 
+; PPU_ADDRESS = 0x64;
 ;
 	lda     #$64
 	sta     $2006
 ;
-; for(index=0;index < sizeof(HUD);++index){
+; for (index = 0; index < sizeof(HUD); ++index)
 ;
 	lda     #$00
 	sta     _index
-L0647:	lda     _index
+L0656:	lda     _index
 	cmp     #$07
-	bcs     L0648
+	bcs     L0657
 ;
 ; PPU_DATA = HUD[index];
 ;
@@ -2339,14 +2334,14 @@ L0647:	lda     _index
 	lda     _HUD,y
 	sta     $2007
 ;
-; for(index=0;index < sizeof(HUD);++index){
+; for (index = 0; index < sizeof(HUD); ++index)
 ;
 	inc     _index
-	jmp     L0647
+	jmp     L0656
 ;
 ; PPU_ADDRESS = 0x24;
 ;
-L0648:	lda     #$24
+L0657:	lda     #$24
 	sta     $2006
 ;
 ; PPU_ADDRESS = 0x74;
@@ -2354,13 +2349,13 @@ L0648:	lda     #$24
 	lda     #$74
 	sta     $2006
 ;
-; for(index=0;index < sizeof(HUD);++index){
+; for (index = 0; index < sizeof(HUD); ++index)
 ;
 	lda     #$00
 	sta     _index
-L0649:	lda     _index
+L0658:	lda     _index
 	cmp     #$07
-	bcs     L064A
+	bcs     L0659
 ;
 ; PPU_DATA = HUD2[index];
 ;
@@ -2368,14 +2363,14 @@ L0649:	lda     _index
 	lda     _HUD2,y
 	sta     $2007
 ;
-; for(index=0;index < sizeof(HUD);++index){
+; for (index = 0; index < sizeof(HUD); ++index)
 ;
 	inc     _index
-	jmp     L0649
+	jmp     L0658
 ;
 ; PPU_ADDRESS = 0x27;
 ;
-L064A:	lda     #$27
+L0659:	lda     #$27
 	sta     $2006
 ;
 ; PPU_ADDRESS = 0xc0;
@@ -2383,27 +2378,27 @@ L064A:	lda     #$27
 	lda     #$C0
 	sta     $2006
 ;
-; for(index=0;index < 8;++index){
+; for (index = 0; index < 8; ++index)
 ;
 	lda     #$00
 	sta     _index
-L064B:	lda     _index
+L065A:	lda     _index
 	cmp     #$08
-	bcs     L0604
+	bcs     L060F
 ;
 ; PPU_DATA = 0xff;
 ;
 	lda     #$FF
 	sta     $2007
 ;
-; for(index=0;index < 8;++index){
+; for (index = 0; index < 8; ++index)
 ;
 	inc     _index
-	jmp     L064B
+	jmp     L065A
 ;
 ; }
 ;
-L0604:	rts
+L060F:	rts
 
 .endproc
 
@@ -2449,12 +2444,12 @@ L0604:	rts
 ;
 ; while (Game_Mode == TITLE_MODE)
 ;
-	jmp     L0652
+	jmp     L0661
 ;
-; while (NMI_flag == 0); // wait till v-blank
+; while (NMI_flag == 0)
 ;
-L064C:	lda     _NMI_flag
-	beq     L064C
+L065B:	lda     _NMI_flag
+	beq     L065B
 ;
 ; Rotate_Palette();
 ;
@@ -2468,24 +2463,24 @@ L064C:	lda     _NMI_flag
 ;
 	jsr     _Get_Input
 ;
-; if (((joypad1old & START) == 0)&&((joypad1 & START) != 0)){
+; if (((joypad1old & START) == 0) && ((joypad1 & START) != 0))
 ;
 	lda     _joypad1old
 	and     #$10
-	bne     L0655
+	bne     L0664
 	lda     _joypad1
 	and     #$10
-	beq     L0656
+	beq     L0665
 ;
 ; NMI_flag = 0;
 ;
 	lda     #$00
 	sta     _NMI_flag
 ;
-; while (NMI_flag == 0); // wait till v-blank
+; while (NMI_flag == 0)
 ;
-L064F:	lda     _NMI_flag
-	beq     L064F
+L065E:	lda     _NMI_flag
+	beq     L065E
 ;
 ; All_Off();
 ;
@@ -2529,22 +2524,22 @@ L064F:	lda     _NMI_flag
 ;
 ; NMI_flag = 0;
 ;
-L0655:	lda     #$00
-L0656:	sta     _NMI_flag
+L0664:	lda     #$00
+L0665:	sta     _NMI_flag
 ;
 ; while (Game_Mode == TITLE_MODE)
 ;
-L0652:	lda     _Game_Mode
-	beq     L064C
+L0661:	lda     _Game_Mode
+	beq     L065B
 ;
 ; while (Game_Mode == RUN_GAME_MODE)
 ;
-	jmp     L0654
+	jmp     L0663
 ;
-; while (NMI_flag == 0); // wait till v-blank
+; while (NMI_flag == 0)
 ;
-L0653:	lda     _NMI_flag
-	beq     L0653
+L0662:	lda     _NMI_flag
+	beq     L0662
 ;
 ; Get_Input();
 ;
@@ -2565,13 +2560,13 @@ L0653:	lda     _NMI_flag
 ;
 ; while (Game_Mode == RUN_GAME_MODE)
 ;
-L0654:	lda     _Game_Mode
+L0663:	lda     _Game_Mode
 	cmp     #$01
-	beq     L0653
+	beq     L0662
 ;
 ; while (1)
 ;
-	jmp     L0652
+	jmp     L0661
 
 .endproc
 

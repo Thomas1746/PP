@@ -10,26 +10,29 @@ void main(void)
 {
 	All_Off();
 	Draw_Title();
-	
+
 	joypad1 = 0xff; // fix a bug, reset is wiping joypad1old
 	Load_Palette();
 	Reset_Scroll();
-	
+
 	Wait_Vblank();
 	All_On();
 	while (1)
 	{ // infinite loop
 		while (Game_Mode == TITLE_MODE)
 		{ // Title Screen
-			while (NMI_flag == 0); // wait till v-blank
+			while (NMI_flag == 0)
+				; // wait till v-blank
 			Rotate_Palette();
 			Reset_Scroll();
-			
+
 			Get_Input();
-		
-			if (((joypad1old & START) == 0)&&((joypad1 & START) != 0)){
+
+			if (((joypad1old & START) == 0) && ((joypad1 & START) != 0))
+			{
 				NMI_flag = 0;
-				while (NMI_flag == 0); // wait till v-blank
+				while (NMI_flag == 0)
+					; // wait till v-blank
 				// init game mode
 				All_Off();
 				Game_Mode = RUN_GAME_MODE;
@@ -38,19 +41,19 @@ void main(void)
 				Y1 = 0x70; // middle of screen
 				Load_Palette();
 				Reset_Scroll();
-				
+
 				Wait_Vblank();
 				// was All_On(); changed to...
-					PPU_CTRL = 0x91;
-					
+				PPU_CTRL = 0x91;
 			}
-			
+
 			NMI_flag = 0;
 		}
-		
+
 		while (Game_Mode == RUN_GAME_MODE)
 		{ // Game Mode
-			while (NMI_flag == 0); // wait till v-blank
+			while (NMI_flag == 0)
+				; // wait till v-blank
 
 			//every_frame();	// moved this to the nmi code in reset.s for greater stability
 			Get_Input();
@@ -61,7 +64,6 @@ void main(void)
 		}
 	}
 }
-
 
 void update_Sprites(void)
 {
@@ -180,60 +182,37 @@ void move_logic(void)
 		NametableB &= 1; // keep it 0 or 1
 	}
 	// we want to find which metatile in the collision map this point is in...is it solid?
-	collision_Index = (((char)Scroll_Adjusted_X >> 4) + ((Y1 + 16) & 0xf0));
+	collision_Index = (((char)Scroll_Adjusted_X >> 4) + ((Y1 + 16) & 0xf0)); //bottom left
 	collision = 0;
-	Collision_Down(); // if on platform, ++collision
-
-	// now check the bottom right corner of character
-	// which nametable am I in?
-	NametableB = Nametable;
-	Scroll_Adjusted_X = (X1 + Horiz_scroll + 12);
-	high_byte = Scroll_Adjusted_X >> 8;
-	if (high_byte != 0)
-	{					 // if H scroll + Sprite X > 255, then we should use
-		++NametableB;	// the other nametable's collision map
-		NametableB &= 1; // keep it 0 or 1
-	}
-	collision_Index = (((char)Scroll_Adjusted_X >> 4) + ((Y1+ 16) & 0xf0)); // bottom right
-	Collision_Down();														 // if on platform, ++collision
-// first check the bottom top corner of character
-	// which nametable am I in?
-	NametableB = Nametable;
-	Scroll_Adjusted_X = (X1 + Horiz_scroll + 3); // left
-	high_byte = Scroll_Adjusted_X >> 8;
-	if (high_byte != 0)
-	{					 // if H scroll + Sprite X > 255, then we should use
-		++NametableB;	// the other nametable's collision map
-		NametableB &= 1; // keep it 0 or 1
-	}
-	// we want to find which metatile in the collision map this point is in...is it solid?
-	collision_Index = (((char)Scroll_Adjusted_X >> 4) + ((Y1) & 0xf0));
-	collision = 0;
-	Collision_Down(); // if on platform, ++collision
-
-	// now check the bottom right corner of character
-	// which nametable am I in?
-	NametableB = Nametable;
-	Scroll_Adjusted_X = (X1 + Horiz_scroll + 12);
-	high_byte = Scroll_Adjusted_X >> 8;
-	if (high_byte != 0)
-	{					 // if H scroll + Sprite X > 255, then we should use
-		++NametableB;	// the other nametable's collision map
-		NametableB &= 1; // keep it 0 or 1
-	}
-	collision_Index = (((char)Scroll_Adjusted_X >> 4) + ((Y1 + 16) & 0xf0)); // top right
-	Collision_Down();	
-	// if ((Y1 & 0x0f) > 1) // only platform collide if nearly aligned to a metatile
-	// 	collision = 0;
-
-	if (collision == 0)
+	Collision_Down();												  // if on platform, ++collision
+	collision_Index = (((char)Scroll_Adjusted_X >> 4) + ((Y1)&0xf0)); //top left
+	Collision_Down();												  // if on platform, ++collision
+	if (collision >= 50) {
+		X1 = 0x80;
+		Y1 = 0x70;
+	}													 // if on platform, ++collision
+	if (Y_speed >= 0)
 	{
-		Y_speed += 4; // gravity
+		if ((Y1 & 0x0f) > 1) // only platform collide if nearly aligned to a metatile
+			collision = 0;
+
+		if (collision == 0)
+		{
+			Y_speed += 4; // gravity
+		}
+		else
+		{
+			Y_speed = 0; // collision = stop falling
+			Y1 &= 0xf0;  // align to the metatile
+		}
 	}
-	else 
+	else
 	{
-		Y_speed = 0; // collision = stop falling
-		Y1 &= 0xf0;  // align to the metatile
+		Y_speed += 4;
+		if (collision < 5 && collision > 0)
+		{
+			Y_speed = 1;
+		}
 	}
 
 	// Jump - we already figured if we are on a platform, only jump if on a platform
@@ -241,7 +220,7 @@ void move_logic(void)
 	{
 		if (((joypad1 & A_BUTTON) != 0) && ((joypad1old & A_BUTTON) == 0))
 		{
-			Y_speed = -0x38; // 0xc8
+			Y_speed = -0x48; // 0xc8
 		}
 	}
 
@@ -262,22 +241,41 @@ void move_logic(void)
 		if (Y_speed > 0x20)
 			Y_speed = 0x20;
 	}
-
-	// move player
-	Horiz_scroll_Old = Horiz_scroll;
-	Horiz_scroll += (X_speed >> 4); // use the high nibble
-	if (X_speed >= 0)
-	{										 // going right
-		if (Horiz_scroll_Old > Horiz_scroll) // if pass 0, switch nametables
-			++Nametable;
+	if (X_speed != 0)
+	{
+		// move player
+		Horiz_scroll_Old = Horiz_scroll;
+		Horiz_scroll += (X_speed >> 4); // use the high nibble
+		// which nametable am I in?
+		NametableB = Nametable;
+		Scroll_Adjusted_X = (X1 + Horiz_scroll + (X_speed < 0 ? 2 : 12)); // left
+		high_byte = Scroll_Adjusted_X >> 8;
+		if (high_byte != 0)
+		{					 // if H scroll + Sprite X > 255, then we should use
+			++NametableB;	// the other nametable's collision map
+			NametableB &= 1; // keep it 0 or 1
+		}
+		// we want to find which metatile in the collision map this point is in...is it solid?
+		collision = 0;																				  // if on platform, ++collision
+		collision_Index = (((char)Scroll_Adjusted_X >> 4) + ((Y1 + (Y_speed <= 0 ? 8 : 16)) & 0xf0)); //top left if on ground / falling, bottom left if in air
+		Collision_Down();
+		if (collision > 0)
+		{
+			Horiz_scroll = Horiz_scroll_Old;
+			X_speed = 0;
+		}
+		if (X_speed >= 0)
+		{										 // going right
+			if (Horiz_scroll_Old > Horiz_scroll) // if pass 0, switch nametables
+				++Nametable;
+		}
+		else
+		{ // going left
+			if (Horiz_scroll_Old < Horiz_scroll)
+				++Nametable; // if pass 0, switch nametables
+		}
+		Nametable &= 1; // keep it 1 or 0
 	}
-	else
-	{ // going left
-		if (Horiz_scroll_Old < Horiz_scroll)
-			++Nametable; // if pass 0, switch nametables
-	}
-	Nametable &= 1; // keep it 1 or 0
-
 	Y1 += (Y_speed >> 4); // use the high nibble
 
 	if (walk_count > 0x1f) // walk_count forced 0-1f
@@ -303,61 +301,69 @@ void Draw_Background(void)
 	memcpy(C_MAP, C1, 240);
 	memcpy(C_MAP2, C2, 240);
 }
-void All_Off(void) {
+void All_Off(void)
+{
 	PPU_CTRL = 0;
-	PPU_MASK = 0; 
+	PPU_MASK = 0;
 }
-	
-void All_On(void) {
+
+void All_On(void)
+{
 	PPU_CTRL = 0x90; // screen is on, NMI on
-	PPU_MASK = 0x1e; 
-}		
-	
-void Reset_Scroll (void) {
+	PPU_MASK = 0x1e;
+}
+
+void Reset_Scroll(void)
+{
 	PPU_ADDRESS = 0;
 	PPU_ADDRESS = 0;
 	SCROLL = 0;
 	SCROLL = 0;
 }
-	
-void Load_Palette(void) {
+
+void Load_Palette(void)
+{
 	PPU_ADDRESS = 0x3f;
 	PPU_ADDRESS = 0x00;
-	for( index = 0; index < sizeof(PALETTE); ++index ){
+	for (index = 0; index < sizeof(PALETTE); ++index)
+	{
 		PPU_DATA = PALETTE[index];
 	}
 }
 
+const unsigned char Palette_Fade[] = { // for title screen
+	0x24, 0x14, 0x04, 0x14};
 
-const unsigned char Palette_Fade []={ // for title screen
-	0x24, 0x14, 0x04, 0x14
-};
-
-void Rotate_Palette(void){ // for title screen
+void Rotate_Palette(void)
+{ // for title screen
 	PPU_ADDRESS = 0x3f;
 	PPU_ADDRESS = 0x0b;
 	PPU_DATA = Palette_Fade[(Frame_Count >> 2) & 0x03];
 }
 
-void Draw_Title(void) {
+void Draw_Title(void)
+{
 	PPU_ADDRESS = 0x20; // address of nametable #0 = 0x2000
 	PPU_ADDRESS = 0x00;
-	UnRLE(Title);	// uncompresses our data
-	
+	UnRLE(Title); // uncompresses our data
+
 	PPU_ADDRESS = 0x24; // draw the HUD on opposite nametable
-	PPU_ADDRESS = 0x64; 
-	for(index=0;index < sizeof(HUD);++index){
+	PPU_ADDRESS = 0x64;
+	for (index = 0; index < sizeof(HUD); ++index)
+	{
 		PPU_DATA = HUD[index];
 	}
 	PPU_ADDRESS = 0x24;
 	PPU_ADDRESS = 0x74;
-	for(index=0;index < sizeof(HUD);++index){
+	for (index = 0; index < sizeof(HUD); ++index)
+	{
 		PPU_DATA = HUD2[index];
 	}
 	// attribute table HUD
 	PPU_ADDRESS = 0x27;
 	PPU_ADDRESS = 0xc0;
-	for(index=0;index < 8;++index){
+	for (index = 0; index < 8; ++index)
+	{
 		PPU_DATA = 0xff;
 	}
 }
