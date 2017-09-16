@@ -1,6 +1,7 @@
 //AudioEngine.c
 
 #include "AudioDefine.h"
+#include "DEFINE.c"
 
 uchar bassLine[] = {D3, A2, D3, A2};
 uchar bassNote = 0;
@@ -16,7 +17,7 @@ void audioReset()
 	currentTick = 0;
 	currentBar = 0;
 	currentSemiQ = 0;
-	
+
 	bossaBassPos = 0;
 	bossaMelodyAPos = 0;
 	bossaMelodyCPos = 0;
@@ -29,10 +30,13 @@ void audioReset()
 void audioUpdate()
 {
 	++currentTick;
-	if(currentState == SONG_TEST)
+	if(audioState == SONG_BOSSA)
 	{
-		//songTest();
 		bossaSong();
+	}
+	if(audioState == SONG_COUNTRY)
+	{
+		titleAudio();
 	}
 }
 
@@ -89,7 +93,11 @@ void playSpikes()
 
 void titleAudio()
 {
-	
+	if(currentTick == 24) 
+	{
+		currentTick = 0;
+		sneezeSound();
+	}
 }
 
 void bossaSong()

@@ -40,7 +40,7 @@ void title_loop()
 	while (NMI_flag == 0)
 		; // wait till v-blank
 	Reset_Scroll();
-
+	audioUpdate();
 	Get_Input();
 
 	if (((joypad1old & START) == 0) && ((joypad1 & START) != 0))
@@ -131,7 +131,7 @@ void death_loop()
 	while (NMI_flag == 0)
 		; // wait till v-blank
 	Reset_Scroll();
-
+	audioUpdate();
 	Get_Input();
 	Clear_Sprite_Zero();
 
