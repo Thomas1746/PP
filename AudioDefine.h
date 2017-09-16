@@ -39,18 +39,55 @@ uchar notes[] = {
 };
 
 uchar bossaBassA[][2] = {
-	{F3, 0}, {C4, 3}, {C4, 4}, {F3, 7},
-	{F3, 8}, {C4, 11}, {C4, 12}, {F3, 14}
+	{C3, 0}, {G4, 3}, {G4, 4}, {C3, 7},
+	{C3, 8}, {G4, 11}, {G4, 12}, {C3, 14},
+	{Bb3, 0}, {F3, 3}, {F3, 4}, {Bb3, 7},
+	{A3, 8}, {F3, 12}
 };
 uchar bossaBassB[][2] = {
-	{Eb3, 0}, {Bb3, 3}, {Bb3, 4}, {Eb3, 7},
-	{D3, 8}, {A3, 11}, {F3, 12}, {C4, 15}
+	{Bb3, 0}, {F3, 3}, {F3, 4}, {Bb3, 7},
+	{A3, 8}, {F3, 12}, {NOTE_CHOICE_MAX, 14}, {NOTE_CHOICE_MAX, 15}
 };
 uchar bossaBassPos = 0;
 
-// uchar bossaMelody1[][2] = {
+uchar bossaMelodyA[][2] = {
+	{E4, 0},
+	{B4, 6},
+	{B4, 10},
+	{C5, 11},
+	{D5, 12},
+	{B4, 13},
+	{E5, 14},
+	{A4, 15}
+};
+uchar bossaMelodyAPos = 0;
 
-// }
+uchar bossaMelodyB[][2] = {
+	{E4, 0},
+	{B4, 6},
+	{B4, 10},
+	{C5, 11},
+	{D5, 12},
+	{B4, 13},
+	{E4, 14},
+	{Eb4, 15}
+};
+
+uchar bossaMelodyC[][2] = {
+	{D4, 0},
+	{Bb4, 6},
+	{A4, 8},
+	{F5, 12},
+	{A4, 15}
+};
+uchar bossaMelodyCPos = 0;
+
+uchar bossaMelodyD[][2] = {
+	{E4, 0},
+	{B4, 6},
+	{E4, 8}
+};
+uchar bossaMelodyDPos = 0;
 
 
 void setupAudio(void);

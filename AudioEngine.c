@@ -21,34 +21,6 @@ void audioUpdate()
 	}
 }
 
-void bossaSong()
-{
-	if(currentTick == 12) 
-	{
-		currentTick = 0;
-		if((currentBar == 0 || currentBar == 1 || currentBar == 3) 
-			&& currentSemiQ == bossaBassA[bossaBassPos][1])
-		{
-			playTri(bossaBassA[bossaBassPos][0]);
-			++bossaBassPos;
-			if(bossaBassPos == 8) bossaBassPos = 0;
-		}
-		else if(currentBar == 2 && currentSemiQ == bossaBassB[bossaBassPos][1])
-		{
-			playTri(bossaBassB[bossaBassPos][0]);
-			++bossaBassPos;
-			if(bossaBassPos == 8) bossaBassPos = 0;
-		}
-		++currentSemiQ;
-		if(currentSemiQ == 16)
-		{
-			currentSemiQ = 0;
-			++currentBar;
-			if(currentBar == 4) currentBar = 0;
-		}
-	}
-}
-
 void songTest()
 {
 	if(currentTick >= 15)
@@ -83,6 +55,7 @@ void audioBeep()
 
 void playSquare(uchar note, uchar voice)
 {
+	if(note >= NOTE_CHOICE_MAX) return;
 	voice *= 4;
 	*((unsigned char*)(0x4000 + voice)) = 0x8f;
 	*((unsigned char*)(0x4001 + voice)) = 0x00;
@@ -95,6 +68,7 @@ void playSquare(uchar note, uchar voice)
 
 void playTri(uchar note)
 {
+	if(note >= NOTE_CHOICE_MAX) return;
 	*((unsigned char*)0x4008) = 0x7f;
 	*((unsigned char*)0x400a) = notes[note];
 	if(note < 5) 		*((unsigned char*)0x400b) = 0x13;
@@ -115,4 +89,90 @@ void sneezeSound()
 	*((uchar*)0x400c) = 0x0f;
 	*((uchar*)0x400e) = 13 | 0x40;
 	*((uchar*)0x400f) = 0xF0;
+}
+
+void bossaSong()
+{
+	if(currentTick == 12) 
+	{
+		currentTick = 0;
+
+		switch(currentBar)
+		{
+			case 0:
+			if(currentSemiQ == bossaBassA[bossaBassPos][1]){
+				playTri(bossaBassA[bossaBassPos][0]);
+				++bossaBassPos;
+			}
+			if(currentSemiQ == bossaMelodyA[bossaMelodyAPos][1]){
+				playSquare(bossaMelodyA[bossaMelodyAPos][0], SQUARE_ONE);
+				++bossaMelodyAPos;
+			}
+			break;
+
+			case 1:
+			if(currentSemiQ == bossaBassA[bossaBassPos][1]){
+				playTri(bossaBassA[bossaBassPos][0]);
+				++bossaBassPos;
+			}
+			if(currentSemiQ == bossaMelodyB[bossaMelodyAPos][1])
+			{
+				playSquare(bossaMelodyB[bossaMelodyAPos][0], SQUARE_ONE);
+				++bossaMelodyAPos;
+			}
+			break;
+
+			case 2:
+			if(currentSemiQ == bossaBassB[bossaBassPos][1]){
+				playTri(bossaBassB[bossaBassPos][0]);
+				++bossaBassPos;
+			}
+			if(currentSemiQ == bossaMelodyC[bossaMelodyCPos][1])
+			{
+				playSquare(bossaMelodyC[bossaMelodyCPos][0], SQUARE_ONE);
+				++bossaMelodyCPos;
+			}
+			break;
+
+			case 3:
+			if(currentSemiQ == bossaBassA[bossaBassPos][1]){
+				playTri(bossaBassA[bossaBassPos][0]);
+				++bossaBassPos;
+			}
+			if(currentSemiQ == bossaMelodyD[bossaMelodyDPos][1])
+			{
+				playSquare(bossaMelodyD[bossaMelodyDPos][0], SQUARE_ONE);
+				++bossaMelodyDPos;
+			}
+			break;
+		}
+
+		if(currentSemiQ == 0|| currentSemiQ == 8)
+		{
+			sneezeSound();
+		}
+
+		if(bossaBassPos >= 8) bossaBassPos = 0;
+		if(bossaMelodyAPos >= 8) bossaMelodyAPos = 0;
+		if(bossaMelodyCPos >= 5) bossaMelodyCPos = 0;
+		if(bossaMelodyDPos >= 3) bossaMelodyDPos = 0;
+
+		if((currentBar == 0 || currentBar == 1 || currentBar == 3))
+		{
+			if(currentSemiQ == bossaMelodyB[bossaMelodyAPos][1] && currentBar == 1)
+			{
+				playSquare(bossaMelodyB[bossaMelodyAPos][0], SQUARE_ONE);
+				++bossaMelodyAPos;
+				if(bossaMelodyAPos >= 8) bossaMelodyAPos = 0; //loop
+			}
+		}
+		
+		++currentSemiQ;
+		if(currentSemiQ == 16)
+		{
+			currentSemiQ = 0;
+			++currentBar;
+			if(currentBar == 4) currentBar = 0;
+		}
+	}
 }
