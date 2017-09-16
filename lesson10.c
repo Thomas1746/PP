@@ -304,7 +304,9 @@ void move_logic(void)
 		}
 		// we want to find which metatile in the collision map this point is in...is it solid?
 		collision = 0;																				  // if on platform, ++collision
-		collision_Index = (((char)Scroll_Adjusted_X >> 4) + ((Y1 + (Y_speed <= 0 ? 15 : 16)) & 0xf0)); //top left if on ground / falling, bottom left if in air
+		collision_Index = (((char)Scroll_Adjusted_X >> 4) + ((Y1 + (Y_speed <= 0 ? 31 : 32)) & 0xf0)); //top left if on ground / falling, bottom left if in air
+		Collision_Down();
+		collision_Index = (((char)Scroll_Adjusted_X >> 4) + ((Y1 + 16) & 0xf0)); //top left if on ground / falling, bottom left if in air
 		Collision_Down();
 		collision_Index = (((char)Scroll_Adjusted_X >> 4) + ((Y1) & 0xf0)); //top left if on ground / falling, bottom left if in air
 		Collision_Down();
