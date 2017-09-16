@@ -11,6 +11,8 @@ uchar currentBar = 0;
 uchar currentBeat = 0;
 uchar currentSemiQ = 0;
 
+bool isSneezing = 0;
+
 enum {
 	Ab2, A2, Bb2, B2, C3, Db3, D3, Eb3, E3, F3,
 	Gb3, G3, Ab3, A3, Bb3, B3, C4, Db4, D4, Eb4, 

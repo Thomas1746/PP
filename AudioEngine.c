@@ -24,7 +24,12 @@ void audioUpdate()
 		{
 			bassNote = 0;
 		}
-		if(bassNote == 1) sneezeSound();
+		if(bassNote == 1)
+		{
+			sneezeSound();
+			isSneezing = 1;
+		} 
+		else isSneezing = false;
 		
 	}
 }
