@@ -24,9 +24,9 @@ enum {
 };
 
 enum {
-	SONG_TEST, SONG_BOSSA, SONG_COUNTRY
+	SONG_BOSSA, SONG_COUNTRY
 };
-uchar currentState = SONG_TEST;
+uchar audioState = SONG_COUNTRY;
 
 enum {SQUARE_ONE, SQUARE_TWO};
 
@@ -49,6 +49,7 @@ void playSquare(uchar /*note*/, uchar /*voice*/);
 void playTri(uchar /*note*/);
 void sneezeSound(void);
 void bossaSong(void);
+void titleAudio(void);
 
 /////////////////Bossa/////////////////
 
