@@ -1,10 +1,6 @@
 //AudioEngine.c
 
-typedef unsigned char uchar;
-
-void setupAudio(void);
-void audioUpdate(void);
-void audioBeep(void);
+#include "AudioDefine.h"
 
 void setupAudio()
 {
@@ -23,4 +19,9 @@ void audioBeep()
 	*((unsigned char*)0x4000) = 0x0f;
 	*((unsigned char*)0x4003) = 0x01;
 	}
+}
+
+void playScale()
+{
+	;
 }
