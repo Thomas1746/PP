@@ -65,6 +65,13 @@ void main(void)
 			NMI_flag = 0;
 		}
 	}
+
+	if (Game_Mode == GAME_OVER_MODE) {
+		while (NMI_flag == 0);
+
+		Get_Input();
+		NMI_flag = 0;
+	}
 }
 
 void update_Sprites(void)
@@ -85,9 +92,9 @@ void update_Sprites(void)
 			++index4;			
 			SPRITES[index4] = MetaSprite_Y[index] + Y1 + 16; // relative y + master y
 			++index4;
-			SPRITES[index4] = MetaSprite_Tile_R[index + state4]; // tile numbers
+			SPRITES[index4] = MetaSprite_Tile_R[index + state4]+32; // tile numbers
 			++index4;
-			SPRITES[index4] = MetaSprite_Attrib_R[index]; // attributes, all zero here
+			SPRITES[index4] = MetaSprite_Attrib_R[index]+32; // attributes, all zero here
 			++index4;
 			SPRITES[index4] = MetaSprite_X[index] + X1; // relative x + master x
 			++index4;
@@ -107,9 +114,9 @@ void update_Sprites(void)
 			++index4;		
 			SPRITES[index4] = MetaSprite_Y[index] + Y1 + 16; // relative y + master y
 			++index4;
-			SPRITES[index4] = MetaSprite_Tile_L[index + state4]; // tile numbers
+			SPRITES[index4] = MetaSprite_Tile_L[index + state4]+32; // tile numbers
 			++index4;
-			SPRITES[index4] = MetaSprite_Attrib_L[index]; // attributes, all zero here
+			SPRITES[index4] = MetaSprite_Attrib_L[index]+32; // attributes, all zero here
 			++index4;
 			SPRITES[index4] = MetaSprite_X[index] + X1; // relative x + master x
 			++index4;		
@@ -229,6 +236,8 @@ void move_logic(void)
 		Y1 = 0x70;
 		Horiz_scroll = 0x80;
 		NametableB = Nametable;
+		//Draw_Game_Over();
+		//Game_Mode = GAME_OVER_MODE;
 		return;
 	} // if on platform, ++collision
 	if (Y_speed >= 0)
@@ -264,7 +273,14 @@ void move_logic(void)
 			Y_speed = -0x48; // 0xc8
 			if(collision > 0)
 			{
-				audioBeep();
+				playSquare(currentNote, SQUARE_ONE);
+				playSquare(currentNote + 4, SQUARE_TWO);
+				++currentNote;
+				if(currentNote == NOTE_CHOICE_MAX)
+				{
+					currentNote -= NOTE_CHOICE_MAX;
+				}
+				//audioBeep();
 			}
 		}
 	}
@@ -419,3 +435,16 @@ void Draw_Title(void)
 		PPU_DATA = 0xff;
 	}
 }
+
+void Draw_Game_Over(void) {
+	All_Off();
+	PPU_ADDRESS = 0x20; // address of nametable #0 = 0x2000
+	PPU_ADDRESS = 0x00;
+	UnRLE(Keep);
+	PPU_ADDRESS = 0x3f; // address of nametable #0 = 0x2000
+	PPU_ADDRESS = 0x03;
+	PPU_DATA = 0x30; // change 1 color to white
+	Reset_Scroll();
+	Wait_Vblank();
+}
+
