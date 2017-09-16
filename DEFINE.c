@@ -24,6 +24,7 @@ enum {TITLE_MODE, RUN_GAME_MODE, PAUSE_MODE, GAME_OVER_MODE, VICTORY_MODE, BOSS_
 // Globals
 // our startup code initialized all values to zero
 #pragma bss-name(push, "ZEROPAGE")
+unsigned int player_lives;
 unsigned char NMI_flag;
 unsigned char PPU_flag;
 unsigned char PPU_flag2;
@@ -66,6 +67,7 @@ unsigned char temp2;
 unsigned char temp3;
 unsigned char temp4;
 unsigned char Horiz_scroll_Plus; 
+unsigned char score;
 
 
 #pragma bss-name(push, "OAM")
@@ -98,6 +100,8 @@ const unsigned char HUD2[] = {"LIVES:"};
 #include "BG/N1.csv"
 #include "BG/N2.csv"
 #include "BG/Title.h"
+//#include "BG/Game_Over.h"
+#include "BG/Keep.h"
 
 // collision maps called C1 and C2
 // now their value is 0-11, which will index to this array...
@@ -139,7 +143,9 @@ const unsigned char MetaSprite_Tile_R[] = { // tile numbers, right
 	0, 1, 0x10, 0x11, 	// walk 0, 2
 	2, 3, 0x12, 0x13,	// walk 1
 	4, 5, 0x14, 0x15, 	// walk 3
-	6, 7, 0x16, 0x17};	// jump
+	6, 7, 0x16, 0x17,	// walk 5
+	8, 9, 0x18, 0x19,	// walk 7
+	10, 11, 0x20, 0x21};	// jump
 
 const unsigned char MetaSprite_Attrib_R[] = {0, 0, 0, 0}; // attributes = not flipped
 
@@ -150,7 +156,9 @@ const unsigned char MetaSprite_Tile_L[] = { // tile numbers, left
 	1, 0, 0x11, 0x10, 	// walk 0, 2
 	3, 2, 0x13, 0x12,	// walk 1
 	5, 4, 0x15, 0x14,	// walk 3
-	7, 6, 0x17, 0x16};	// jump
+	7, 6, 0x17, 0x16,
+	9, 8, 0x19, 0x18,
+	11, 10, 0x21, 0x20};	// jump
 
 const unsigned char MetaSprite_Attrib_L[] = {0x40, 0x40, 0x40, 0x40}; //attributes = H flipped
 
@@ -171,6 +179,7 @@ void Draw_Title(void);
 void Sprite_Zero(void);
 void Super_Fast_Write_PPU(void);
 void Super_Fast_Write_PPU2(void);
+void Draw_Game_Over(void);
 
 void __fastcall__ memcpy (void* dest, const void* src, int count);
 void Wait_Vblank(void);

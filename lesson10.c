@@ -12,7 +12,7 @@ void main(void)
 {
 	All_Off();
 	Draw_Title();
-
+	player_lives = 3;
 	joypad1 = 0xff; // fix a bug, reset is wiping joypad1old
 	Load_Palette();
 	Reset_Scroll();
@@ -35,8 +35,7 @@ void main(void)
 			if (((joypad1old & START) == 0) && ((joypad1 & START) != 0))
 			{
 				NMI_flag = 0;
-				while (NMI_flag == 0)
-					; // wait till v-blank
+				while (NMI_flag == 0); // wait till v-blank
 				// init game mode
 				All_Off();
 				Game_Mode = RUN_GAME_MODE;
@@ -69,6 +68,8 @@ void main(void)
 			PPU_CTRL = 0x94;
 			SCROLL = 0;
 			SCROLL = 0; // resetting scroll position, again
+			while (NMI_flag == 0); // wait till v-blank
+
 			//every_frame();	// moved this to the nmi code in reset.s for greater stability
 			Get_Input();
 			PPU_flag = 0;
@@ -91,6 +92,13 @@ void main(void)
 			NMI_flag = 0;
 		}
 	}
+
+	if (Game_Mode == GAME_OVER_MODE) {
+		while (NMI_flag == 0);
+
+		Get_Input();
+		NMI_flag = 0;
+	}
 }
 
 void update_Sprites(void)
@@ -111,7 +119,7 @@ void update_Sprites(void)
 			++index4;
 			SPRITES[index4] = MetaSprite_Y[index] + Y1 + 16; // relative y + master y
 			++index4;
-			SPRITES[index4] = MetaSprite_Tile_R[index + state4]; // tile numbers
+			SPRITES[index4] = MetaSprite_Tile_R[index + state4]+32; // tile numbers
 			++index4;
 			SPRITES[index4] = MetaSprite_Attrib_R[index]; // attributes, all zero here
 			++index4;
@@ -133,7 +141,7 @@ void update_Sprites(void)
 			++index4;
 			SPRITES[index4] = MetaSprite_Y[index] + Y1 + 16; // relative y + master y
 			++index4;
-			SPRITES[index4] = MetaSprite_Tile_L[index + state4]; // tile numbers
+			SPRITES[index4] = MetaSprite_Tile_L[index + state4]+32; // tile numbers
 			++index4;
 			SPRITES[index4] = MetaSprite_Attrib_L[index]; // attributes, all zero here
 			++index4;
@@ -156,6 +164,7 @@ void Collision_Down(void)
 		collision += PLATFORM[temp];
 	}
 }
+
 void move_logic(void)
 {
 	if ((joypad1 & (RIGHT | LEFT)) == 0)
@@ -231,7 +240,7 @@ void move_logic(void)
 	collision_Index = (((char)Scroll_Adjusted_X >> 4) + ((Y1 + 32) & 0xf0)); //bottom left
 	Collision_Down();
 	collisionBot += collision;										  // if on platform, ++collision
-	collision_Index = (((char)Scroll_Adjusted_X >> 4) + ((Y1)&0xf0)); //top left
+	collision_Index = (((char)Scroll_Adjusted_X >> 4) + ((Y1) & 0xf0)); //top left
 	Collision_Down();
 	NametableB = Nametable;
 	Scroll_Adjusted_X = (X1 + Horiz_scroll + 13); // left
@@ -249,12 +258,19 @@ void move_logic(void)
 	collisionBot += collision;
 	collision = collisionOld + collision;
 	collision_Index = (((char)Scroll_Adjusted_X >> 4) + ((Y1)&0xf0)); //top right
+	collision = collisionOld+collision;
+	collision_Index = (((char)Scroll_Adjusted_X >> 4) + ((Y1) & 0xf0)); //top right
 	Collision_Down();												  // if on platform, ++collision
 	if (collision >= 50)
 	{
+		--player_lives;
 		Y1 = 0x70;
 		Horiz_scroll = 0x80;
 		NametableB = Nametable;
+		if(player_lives == 0) {
+			Draw_Game_Over();
+			Game_Mode = GAME_OVER_MODE;
+		}
 		return;
 	} // if on platform, ++collision
 	if (Y_speed >= 0)
@@ -290,7 +306,7 @@ void move_logic(void)
 			Y_speed = -0x48; // 0xc8
 			if (collision > 0)
 			{
-				audioBeep();
+				playNoise(0x0D);
 			}
 		}
 	}
@@ -496,4 +512,14 @@ void Set_Sprite_Zero (void){
 	SPRITE_ZERO[1] = 0x30;	// tile
 	SPRITE_ZERO[2] = 0;		// attributes
 	SPRITE_ZERO[3] = 0xd0;	// x
+void Draw_Game_Over(void) {
+	All_Off();
+	PPU_ADDRESS = 0x20; // address of nametable #0 = 0x2000
+	PPU_ADDRESS = 0x00;
+	UnRLE(Keep);
+	PPU_ADDRESS = 0x3f; // address of nametable #0 = 0x2000
+	PPU_ADDRESS = 0x03;
+	PPU_DATA = 0x30; // change 1 color to white
+	Reset_Scroll();
+	Wait_Vblank();
 }
