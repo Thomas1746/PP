@@ -404,7 +404,7 @@ void move_logic(void)
 	}
 
 	// Jump - we already figured if we are on a platform, only jump if on a platform
-	if (collision > 0)
+	if (collisionBot > 0)
 	{
 		if (isSneezing)
 		{
