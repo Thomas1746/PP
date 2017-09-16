@@ -212,9 +212,8 @@ void move_logic(void)
 	Collision_Down();												  // if on platform, ++collision
 	if (collision >= 50)
 	{
-		X1 = 0x80;
 		Y1 = 0x70;
-		Horiz_scroll = 0;
+		Horiz_scroll = 0x80;
 		NametableB = Nametable;
 		return;
 	} // if on platform, ++collision
