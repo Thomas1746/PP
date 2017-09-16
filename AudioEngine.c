@@ -14,7 +14,44 @@ void setupAudio()
 void audioUpdate()
 {
 	++currentTick;
-	if(currentTick >= 24)
+	if(currentState == SONG_TEST)
+	{
+		//songTest();
+		bossaSong();
+	}
+}
+
+void bossaSong()
+{
+	if(currentTick == 12) 
+	{
+		currentTick = 0;
+		if((currentBar == 0 || currentBar == 1 || currentBar == 3) 
+			&& currentSemiQ == bossaBassA[bossaBassPos][1])
+		{
+			playTri(bossaBassA[bossaBassPos][0]);
+			++bossaBassPos;
+			if(bossaBassPos == 8) bossaBassPos = 0;
+		}
+		else if(currentBar == 2 && currentSemiQ == bossaBassB[bossaBassPos][1])
+		{
+			playTri(bossaBassB[bossaBassPos][0]);
+			++bossaBassPos;
+			if(bossaBassPos == 8) bossaBassPos = 0;
+		}
+		++currentSemiQ;
+		if(currentSemiQ == 16)
+		{
+			currentSemiQ = 0;
+			++currentBar;
+			if(currentBar == 4) currentBar = 0;
+		}
+	}
+}
+
+void songTest()
+{
+	if(currentTick >= 15)
 	{
 		currentTick = 0;
 		++bassNote;
@@ -27,13 +64,12 @@ void audioUpdate()
 		if(bassNote == 1)
 		{
 			sneezeSound();
-			isSneezing = 1;
+			//isSneezing = 1;
 		} 
-		else isSneezing = false;
-		
+		//else isSneezing = false;
 	}
 }
-  
+
 void audioBeep() 
 {
 	//Quick beep –

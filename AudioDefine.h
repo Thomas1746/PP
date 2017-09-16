@@ -11,7 +11,7 @@ uchar currentBar = 0;
 uchar currentBeat = 0;
 uchar currentSemiQ = 0;
 
-bool isSneezing = 0;
+//bool isSneezing = 0;
 
 enum {
 	Ab2, A2, Bb2, B2, C3, Db3, D3, Eb3, E3, F3,
@@ -19,6 +19,11 @@ enum {
 	E4, F4, Gb4, G4, Ab4, A4, Bb4, B4, C5, Db5, 
 	D5, Eb5, E5, F5, Gb5, NOTE_CHOICE_MAX
 };
+
+enum {
+	SONG_TEST, SONG_BOSSA, SONG_COUNTRY
+};
+uchar currentState = SONG_TEST;
 
 enum {SQUARE_ONE, SQUARE_TWO};
 
@@ -33,6 +38,21 @@ uchar notes[] = {
 	0xAF, 0xA4, 0x9B, 0x92, 0x8B
 };
 
+uchar bossaBassA[][2] = {
+	{F3, 0}, {C4, 3}, {C4, 4}, {F3, 7},
+	{F3, 8}, {C4, 11}, {C4, 12}, {F3, 14}
+};
+uchar bossaBassB[][2] = {
+	{Eb3, 0}, {Bb3, 3}, {Bb3, 4}, {Eb3, 7},
+	{D3, 8}, {A3, 11}, {F3, 12}, {C4, 15}
+};
+uchar bossaBassPos = 0;
+
+// uchar bossaMelody1[][2] = {
+
+// }
+
+
 void setupAudio(void);
 void audioUpdate(void);
 void audioBeep(void);
@@ -40,5 +60,7 @@ void playSquare(uchar /*note*/, uchar /*voice*/);
 void playTri(uchar /*note*/);
 void playNoise(uchar /*note*/);
 void sneezeSound(void);
+void bossaSong(void);
+void songTest(void);
 
 #endif
