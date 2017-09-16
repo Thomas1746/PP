@@ -55,6 +55,7 @@ unsigned char collision;
 unsigned char collisionBot;
 unsigned char collisionOld;
 unsigned char temp;
+unsigned char score;
 
 
 #pragma bss-name(push, "OAM")
@@ -76,6 +77,8 @@ const unsigned char HUD2[] = {"LIVES:"};
 #include "BG/N1.csv"
 #include "BG/N2.csv"
 #include "BG/Title.h"
+//#include "BG/Game_Over.h"
+#include "BG/Keep.h"
 
 // collision maps called C1 and C2
 // now their value is 0-11, which will index to this array...
@@ -124,6 +127,7 @@ void Collision_Down(void);
 void move_logic(void);
 void Draw_Background(void);
 void Draw_Title(void);
+void Draw_Game_Over(void);
 
 void __fastcall__ memcpy (void* dest, const void* src, int count);
 void Wait_Vblank(void);

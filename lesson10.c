@@ -66,6 +66,13 @@ void main(void)
 
 			NMI_flag = 0;
 		}
+
+		if (Game_Mode == GAME_OVER_MODE) {
+			while (NMI_flag == 0);
+
+			Get_Input();
+			NMI_flag = 0;
+		}
 	}
 }
 
@@ -215,6 +222,8 @@ void move_logic(void)
 		Y1 = 0x70;
 		Horiz_scroll = 0x80;
 		NametableB = Nametable;
+		//Draw_Game_Over();
+		//Game_Mode = GAME_OVER_MODE;
 		return;
 	} // if on platform, ++collision
 	if (Y_speed >= 0)
@@ -402,4 +411,16 @@ void Draw_Title(void)
 	{
 		PPU_DATA = 0xff;
 	}
+}
+
+void Draw_Game_Over(void) {
+	All_Off();
+	PPU_ADDRESS = 0x20; // address of nametable #0 = 0x2000
+	PPU_ADDRESS = 0x00;
+	UnRLE(Keep);
+	PPU_ADDRESS = 0x3f; // address of nametable #0 = 0x2000
+	PPU_ADDRESS = 0x03;
+	PPU_DATA = 0x30; // change 1 color to white
+	Reset_Scroll();
+	Wait_Vblank();
 }
