@@ -495,10 +495,10 @@ void move_logic(void)
 		Y1 += (Y_speed >> 4); // use the high nibble
 	}
 
-	if (walk_count > 0x29) // walk_count forced 0-29
+	if (walk_count > 0x15) // walk_count forced 0-29
 		walk_count = 0;
 
-	state = Walk_Moves[(walk_count >> 3)]; // if not jumping
+	state = Walk_Moves[(walk_count >> 2)]; // if not jumping
 	if (X_speed == 0 && Y_speed == 0) 
 		state = 2;
 	if (Y_speed < 0) // negative = jumping

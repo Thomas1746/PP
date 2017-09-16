@@ -189,11 +189,15 @@ const unsigned char PALETTE[]={
 0x21, 0x08, 0x0A, 0x0f, //grass
 0x21, 0X07, 0X17, 0x0F, //barrel
 0x21, 0x00, 0x10, 0x1D, //spike
-0x21, 0x07, 0x17, 0x27	//box, rake, nails
+0x21, 0x07, 0x17, 0x27,	//box, rake, nails
+0x21, 0x17, 0x28, 0x39, //character
+0, 0, 0, 0,
+0, 0, 0, 0,
+0, 0, 5, 0x15
 };
 
 const unsigned char Walk_Moves[] = {
-	0, 1, 2, 3, 4}; // just a way to reuse the #0 state tiles
+	0, 0, 1, 1, 2, 2, 3, 3, 4, 4}; // just a way to reuse the #0 state tiles
 	
 const unsigned char MetaSprite_Y[] = {0, 0, 8, 8}; // relative y coordinates
 
