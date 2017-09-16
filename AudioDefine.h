@@ -6,6 +6,12 @@
 typedef unsigned char uchar;
 
 uchar currentNote = 0;
+uchar currentTick = 0;
+uchar currentBar = 0;
+uchar currentBeat = 0;
+uchar currentSemiQ = 0;
+
+bool isSneezing = 0;
 
 enum {
 	Ab2, A2, Bb2, B2, C3, Db3, D3, Eb3, E3, F3,
@@ -30,6 +36,9 @@ uchar notes[] = {
 void setupAudio(void);
 void audioUpdate(void);
 void audioBeep(void);
-void playSquare(uchar note, uchar voice);
+void playSquare(uchar /*note*/, uchar /*voice*/);
+void playTri(uchar /*note*/);
+void playNoise(uchar /*note*/);
+void sneezeSound(void);
 
 #endif

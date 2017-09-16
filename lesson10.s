@@ -958,49 +958,6 @@ _Title:
 	.byte	$00
 	.byte	$01
 	.byte	$00
-_Keep:
-	.byte	$01
-	.byte	$00
-	.byte	$01
-	.byte	$FE
-	.byte	$00
-	.byte	$01
-	.byte	$09
-	.byte	$4B
-	.byte	$65
-	.byte	$65
-	.byte	$70
-	.byte	$00
-	.byte	$50
-	.byte	$6C
-	.byte	$61
-	.byte	$79
-	.byte	$69
-	.byte	$6E
-	.byte	$67
-	.byte	$3F
-	.byte	$00
-	.byte	$01
-	.byte	$55
-	.byte	$59
-	.byte	$65
-	.byte	$73
-	.byte	$00
-	.byte	$01
-	.byte	$3C
-	.byte	$4E
-	.byte	$6F
-	.byte	$00
-	.byte	$01
-	.byte	$FE
-	.byte	$00
-	.byte	$01
-	.byte	$FE
-	.byte	$00
-	.byte	$01
-	.byte	$13
-	.byte	$01
-	.byte	$00
 _PLATFORM:
 	.byte	$00
 	.byte	$01
@@ -3367,5 +3324,10 @@ L075A:	lda     _Game_Mode
 ; while (1)
 ;
 	jmp     L0758
+<<<<<<< HEAD
+=======
+
+.endproc
+>>>>>>> 93bd47180c109562c928a5d196318d1442ee4de5
 
 .endproc
