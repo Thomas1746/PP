@@ -157,12 +157,13 @@ void Draw_Background(void)
 void Clear_Sprite_Zero(void)
 {
 	SPRITE_ZERO[1] = 0x00; // tile
+}
+void Clear_Sprites(void) {
 	for (index = 0; index < 64; ++index)
 	{
 		SPRITES[index] = 0x00;
 	}
 }
-
 void Set_Sprite_Zero(void)
 {
 	SPRITE_ZERO[0] = 0x15; // y

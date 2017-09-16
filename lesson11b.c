@@ -42,6 +42,7 @@ void title_loop()
 	Reset_Scroll();
 	audioUpdate();
 	Get_Input();
+	Clear_Sprites();
 
 	if (((joypad1old & START) == 0) && ((joypad1 & START) != 0))
 	{
