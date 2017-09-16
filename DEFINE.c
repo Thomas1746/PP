@@ -101,7 +101,9 @@ const unsigned char MetaSprite_Tile_R[] = { // tile numbers, right
 	0, 1, 0x10, 0x11, 	// walk 0, 2
 	2, 3, 0x12, 0x13,	// walk 1
 	4, 5, 0x14, 0x15, 	// walk 3
-	6, 7, 0x16, 0x17};	// jump
+	6, 7, 0x16, 0x17,	// walk 5
+	8, 9, 0x18, 0x19,	// walk 7
+	10, 11, 0x20, 0x21};	// jump
 
 const unsigned char MetaSprite_Attrib_R[] = {0, 0, 0, 0}; // attributes = not flipped
 
@@ -112,7 +114,9 @@ const unsigned char MetaSprite_Tile_L[] = { // tile numbers, left
 	1, 0, 0x11, 0x10, 	// walk 0, 2
 	3, 2, 0x13, 0x12,	// walk 1
 	5, 4, 0x15, 0x14,	// walk 3
-	7, 6, 0x17, 0x16};	// jump
+	7, 6, 0x17, 0x16,
+	9, 8, 0x19, 0x18,
+	11, 10, 0x21, 0x20};	// jump
 
 const unsigned char MetaSprite_Attrib_L[] = {0x40, 0x40, 0x40, 0x40}; //attributes = H flipped
 
