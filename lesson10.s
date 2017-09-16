@@ -30,6 +30,7 @@
 	.export		_Scroll_Adjusted_X
 	.export		_Game_Mode
 	.export		_Nametable
+	.export		_Keep
 	.export		_NametableB
 	.export		_walk_count
 	.export		_X_speed
@@ -3323,6 +3324,10 @@ L075A:	lda     _Game_Mode
 ; while (1)
 ;
 	jmp     L0758
+<<<<<<< HEAD
+=======
 
 .endproc
+>>>>>>> 93bd47180c109562c928a5d196318d1442ee4de5
 
+.endproc

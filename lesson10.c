@@ -94,7 +94,7 @@ void update_Sprites(void)
 			++index4;
 			SPRITES[index4] = MetaSprite_Tile_R[index + state4]+32; // tile numbers
 			++index4;
-			SPRITES[index4] = MetaSprite_Attrib_R[index]+32; // attributes, all zero here
+			SPRITES[index4] = MetaSprite_Attrib_R[index]; // attributes, all zero here
 			++index4;
 			SPRITES[index4] = MetaSprite_X[index] + X1; // relative x + master x
 			++index4;
@@ -116,7 +116,7 @@ void update_Sprites(void)
 			++index4;
 			SPRITES[index4] = MetaSprite_Tile_L[index + state4]+32; // tile numbers
 			++index4;
-			SPRITES[index4] = MetaSprite_Attrib_L[index]+32; // attributes, all zero here
+			SPRITES[index4] = MetaSprite_Attrib_L[index]; // attributes, all zero here
 			++index4;
 			SPRITES[index4] = MetaSprite_X[index] + X1; // relative x + master x
 			++index4;		
@@ -444,4 +444,3 @@ void Draw_Game_Over(void) {
 	Reset_Scroll();
 	Wait_Vblank();
 }
-
