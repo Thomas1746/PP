@@ -239,6 +239,7 @@ void move_logic(void)
 		if (collision < 5 && collision > 0)
 		{
 			Y_speed = 1;
+			Y1 += 2;
 		}
 	}
 
