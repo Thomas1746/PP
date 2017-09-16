@@ -154,13 +154,16 @@ void Draw_Background(void)
 		Horiz_scroll_Plus += 0x10;
 	}
 }
-
+void Clear_Sprite_Zero(void)
+{
+	SPRITE_ZERO[1] = 0x00; // tile
+}
 
 void Set_Sprite_Zero(void)
 {
 	SPRITE_ZERO[0] = 0x15; // y
 	SPRITE_ZERO[1] = 0x9C; // tile
-	SPRITE_ZERO[2] = 0;	// attributes
+	SPRITE_ZERO[2] = 0x20;	// attributes
 	SPRITE_ZERO[3] = 0x13; // x
 }
 
@@ -198,6 +201,7 @@ void Should_We_Buffer(void)
 }
 void Draw_Death(void)
 {
+	Clear_Sprite_Zero();
 	PPU_ADDRESS = 0x20; // address of nametable #0 = 0x2000
 	PPU_ADDRESS = 0x00;
 	UnRLE(death); // uncompresses our data
@@ -212,6 +216,7 @@ void Draw_Death(void)
 }
 void Draw_Title(void)
 {
+	Clear_Sprite_Zero();
 	PPU_ADDRESS = 0x20; // address of nametable #0 = 0x2000
 	PPU_ADDRESS = 0x00;
 	UnRLE(Title); // uncompresses our data

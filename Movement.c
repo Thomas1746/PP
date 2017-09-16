@@ -110,7 +110,6 @@ void move_logic(void)
 			while (NMI_flag == 0); // wait till v-blank
 			Game_Mode = GAME_OVER_MODE;
 			audioReset();
-
 			All_Off(); // turn off screen
 			Draw_Death();
 			

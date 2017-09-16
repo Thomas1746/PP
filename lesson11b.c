@@ -12,7 +12,6 @@ void main(void)
 	Draw_Title();
 	X1 = 0x80; // starting position
 	Y1 = 0x70; // middle of screen
-	Set_Sprite_Zero();
 	Load_Palette();
 	Reset_Scroll();
 
@@ -55,6 +54,8 @@ void title_loop()
 		All_Off();		 // turn off screen
 		PPU_CTRL = 0x90; // rightward increments to PPU
 		Load_HUD();
+		
+		Set_Sprite_Zero();
 		Draw_Background();
 		X1 = 0x80; // starting position
 		Y1 = 0x70; // middle of screen
@@ -132,6 +133,7 @@ void death_loop()
 	Reset_Scroll();
 
 	Get_Input();
+	Clear_Sprite_Zero();
 
 	if (((joypad1old & START) == 0) && ((joypad1 & START) != 0))
 	{
