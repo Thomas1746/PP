@@ -12,8 +12,14 @@
 	.macpack	longbranch
 	.forceimport	__STARTUP__
 	.export		_NMI_flag
+	.export		_PPU_flag
+	.export		_PPU_flag2
+	.export		_PPU_ADDRESS_High
+	.export		_PPU_ADDRESS_Low
 	.export		_Frame_Count
 	.export		_index
+	.export		_index2
+	.export		_index3
 	.export		_index4
 	.export		_X1
 	.export		_Y1
@@ -31,6 +37,7 @@
 	.export		_Game_Mode
 	.export		_Nametable
 	.export		_NametableB
+	.export		_Nametable_Plus
 	.export		_walk_count
 	.export		_X_speed
 	.export		_Y_speed
@@ -41,9 +48,21 @@
 	.export		_collisionBot
 	.export		_collisionOld
 	.export		_temp
+	.export		_temp2
+	.export		_temp3
+	.export		_temp4
+	.export		_Horiz_scroll_Plus
+	.export		_SPRITE_ZERO
 	.export		_SPRITES
 	.export		_C_MAP
 	.export		_C_MAP2
+	.export		_BUFFER1
+	.export		_BUFFER2
+	.export		_BUFFER3
+	.export		_BUFFER4
+	.export		_BUFFER5
+	.export		_BUFFER6
+	.export		_BUFFER7
 	.export		_HUD
 	.export		_HUD2
 	.export		_N1
@@ -53,6 +72,8 @@
 	.export		_Title
 	.export		_PLATFORM
 	.export		_PALETTE
+	.export		_METATILES
+	.export		_MT_color
 	.export		_Walk_Moves
 	.export		_MetaSprite_Y
 	.export		_MetaSprite_Tile_R
@@ -61,6 +82,8 @@
 	.export		_MetaSprite_Tile_L
 	.export		_MetaSprite_Attrib_L
 	.export		_Rotate_Palette
+	.export		_Do_Buffer2
+	.export		_Do_Buffer3
 	.export		_All_Off
 	.export		_All_On
 	.export		_Reset_Scroll
@@ -70,6 +93,9 @@
 	.export		_move_logic
 	.export		_Draw_Background
 	.export		_Draw_Title
+	.import		_Sprite_Zero
+	.import		_Super_Fast_Write_PPU
+	.import		_Super_Fast_Write_PPU2
 	.import		_memcpy
 	.import		_Wait_Vblank
 	.import		_UnRLE
@@ -78,8 +104,12 @@
 	.export		_audioUpdate
 	.export		_audioBeep
 	.export		_playScale
+	.export		_Buffer_Tiles
+	.export		_Buffer_Tiles2
 	.export		_main
 	.export		_Palette_Fade
+	.export		_Do_Buffer
+	.export		_Set_Sprite_Zero
 
 .segment	"RODATA"
 
@@ -937,6 +967,68 @@ _PALETTE:
 	.byte	$00
 	.byte	$05
 	.byte	$15
+_METATILES:
+	.byte	$00
+	.byte	$00
+	.byte	$00
+	.byte	$00
+	.byte	$02
+	.byte	$02
+	.byte	$02
+	.byte	$02
+	.byte	$14
+	.byte	$14
+	.byte	$14
+	.byte	$14
+	.byte	$05
+	.byte	$06
+	.byte	$15
+	.byte	$16
+	.byte	$06
+	.byte	$06
+	.byte	$16
+	.byte	$16
+	.byte	$06
+	.byte	$07
+	.byte	$16
+	.byte	$17
+	.byte	$15
+	.byte	$16
+	.byte	$15
+	.byte	$16
+	.byte	$16
+	.byte	$16
+	.byte	$16
+	.byte	$16
+	.byte	$16
+	.byte	$17
+	.byte	$16
+	.byte	$17
+	.byte	$15
+	.byte	$16
+	.byte	$18
+	.byte	$19
+	.byte	$16
+	.byte	$16
+	.byte	$19
+	.byte	$19
+	.byte	$16
+	.byte	$17
+	.byte	$19
+	.byte	$1A
+_MT_color:
+	.byte	$00
+	.byte	$03
+	.byte	$00
+	.byte	$01
+	.byte	$01
+	.byte	$01
+	.byte	$01
+	.byte	$01
+	.byte	$01
+	.byte	$01
+	.byte	$01
+	.byte	$01
 _Walk_Moves:
 	.byte	$00
 	.byte	$01
@@ -1007,9 +1099,21 @@ _Palette_Fade:
 .segment	"ZEROPAGE"
 _NMI_flag:
 	.res	1,$00
+_PPU_flag:
+	.res	1,$00
+_PPU_flag2:
+	.res	1,$00
+_PPU_ADDRESS_High:
+	.res	1,$00
+_PPU_ADDRESS_Low:
+	.res	1,$00
 _Frame_Count:
 	.res	1,$00
 _index:
+	.res	1,$00
+_index2:
+	.res	1,$00
+_index3:
 	.res	1,$00
 _index4:
 	.res	1,$00
@@ -1045,6 +1149,8 @@ _Nametable:
 	.res	1,$00
 _NametableB:
 	.res	1,$00
+_Nametable_Plus:
+	.res	1,$00
 _walk_count:
 	.res	1,$00
 _X_speed:
@@ -1065,14 +1171,39 @@ _collisionOld:
 	.res	1,$00
 _temp:
 	.res	1,$00
+_temp2:
+	.res	1,$00
+_temp3:
+	.res	1,$00
+_temp4:
+	.res	1,$00
+_Horiz_scroll_Plus:
+	.res	1,$00
 .segment	"OAM"
+_SPRITE_ZERO:
+	.res	4,$00
 _SPRITES:
-	.res	256,$00
+	.res	252,$00
 .segment	"MAP"
 _C_MAP:
 	.res	256,$00
 _C_MAP2:
 	.res	256,$00
+.segment	"BSS"
+_BUFFER1:
+	.res	32,$00
+_BUFFER2:
+	.res	32,$00
+_BUFFER3:
+	.res	32,$00
+_BUFFER4:
+	.res	32,$00
+_BUFFER5:
+	.res	8,$00
+_BUFFER6:
+	.res	8,$00
+_BUFFER7:
+	.res	8,$00
 
 ; ---------------------------------------------------------------
 ; void __near__ Rotate_Palette (void)
@@ -1113,6 +1244,118 @@ _C_MAP2:
 ; }
 ;
 	rts
+
+.endproc
+
+; ---------------------------------------------------------------
+; void __near__ Do_Buffer2 (void)
+; ---------------------------------------------------------------
+
+.segment	"CODE"
+
+.proc	_Do_Buffer2: near
+
+.segment	"CODE"
+
+;
+; if (Nametable_Plus == 0)
+;
+	lda     _Nametable_Plus
+	bne     L07FC
+;
+; PPU_ADDRESS_High = 0x24;
+;
+	lda     #$24
+;
+; else
+;
+	jmp     L07FB
+;
+; PPU_ADDRESS_High = 0x20;
+;
+L07FC:	lda     #$20
+L07FB:	sta     _PPU_ADDRESS_High
+;
+; PPU_ADDRESS_Low = ((Horiz_scroll_Plus & 0xf0) >> 3) + 0x80; // +80 because we're skipping the top
+;
+	lda     _Horiz_scroll_Plus
+	and     #$F0
+	lsr     a
+	lsr     a
+	lsr     a
+	clc
+	adc     #$80
+	sta     _PPU_ADDRESS_Low
+;
+; PPU_ADDRESS = PPU_ADDRESS_High;
+;
+	lda     _PPU_ADDRESS_High
+	sta     $2006
+;
+; PPU_ADDRESS = PPU_ADDRESS_Low;
+;
+	lda     _PPU_ADDRESS_Low
+	sta     $2006
+;
+; Super_Fast_Write_PPU();
+;
+	jmp     _Super_Fast_Write_PPU
+
+.endproc
+
+; ---------------------------------------------------------------
+; void __near__ Do_Buffer3 (void)
+; ---------------------------------------------------------------
+
+.segment	"CODE"
+
+.proc	_Do_Buffer3: near
+
+.segment	"CODE"
+
+;
+; if (Nametable_Plus == 0)
+;
+	lda     _Nametable_Plus
+	bne     L07FE
+;
+; PPU_ADDRESS_High = 0x24;
+;
+	lda     #$24
+;
+; else
+;
+	jmp     L07FD
+;
+; PPU_ADDRESS_High = 0x20;
+;
+L07FE:	lda     #$20
+L07FD:	sta     _PPU_ADDRESS_High
+;
+; PPU_ADDRESS_Low = ((Horiz_scroll_Plus & 0xf0) >> 3) + 0x80; // +80 because we're skipping the top
+;
+	lda     _Horiz_scroll_Plus
+	and     #$F0
+	lsr     a
+	lsr     a
+	lsr     a
+	clc
+	adc     #$80
+	sta     _PPU_ADDRESS_Low
+;
+; PPU_ADDRESS = PPU_ADDRESS_High;
+;
+	lda     _PPU_ADDRESS_High
+	sta     $2006
+;
+; PPU_ADDRESS = PPU_ADDRESS_Low;
+;
+	lda     _PPU_ADDRESS_Low
+	sta     $2006
+;
+; Super_Fast_Write_PPU2();
+;
+	jmp     _Super_Fast_Write_PPU2
 
 .endproc
 
@@ -1227,9 +1470,9 @@ _C_MAP2:
 ; for (index = 0; index < sizeof(PALETTE); ++index)
 ;
 	sta     _index
-L0654:	lda     _index
+L07FF:	lda     _index
 	cmp     #$20
-	bcs     L05F5
+	bcs     L0760
 ;
 ; PPU_DATA = PALETTE[index];
 ;
@@ -1240,11 +1483,11 @@ L0654:	lda     _index
 ; for (index = 0; index < sizeof(PALETTE); ++index)
 ;
 	inc     _index
-	jmp     L0654
+	jmp     L07FF
 ;
 ; }
 ;
-L05F5:	rts
+L0760:	rts
 
 .endproc
 
@@ -1266,22 +1509,22 @@ L05F5:	rts
 	asl     a
 	sta     _state4
 ;
-; index4 = 0;
+; index4 = 1;
 ;
-	lda     #$00
+	lda     #$01
 	sta     _index4
 ;
 ; if (direction == 0)
 ;
 	lda     _direction
-	jne     L0664
+	jne     L080F
 ;
 ; for (index = 0; index < 4; ++index)
 ;
 	sta     _index
-L0663:	lda     _index
+L080E:	lda     _index
 	cmp     #$04
-	bcc     L0666
+	bcc     L0811
 ;
 ; }
 ;
@@ -1289,13 +1532,13 @@ L0663:	lda     _index
 ;
 ; SPRITES[index4] = MetaSprite_Y[index] + Y1; // relative y + master y
 ;
-L0666:	lda     #<(_SPRITES)
+L0811:	lda     #<(_SPRITES)
 	ldx     #>(_SPRITES)
 	clc
 	adc     _index4
-	bcc     L03F4
+	bcc     L055F
 	inx
-L03F4:	sta     ptr1
+L055F:	sta     ptr1
 	stx     ptr1+1
 	ldy     _index
 	lda     _MetaSprite_Y,y
@@ -1314,17 +1557,17 @@ L03F4:	sta     ptr1
 	ldx     #>(_SPRITES)
 	clc
 	adc     _index4
-	bcc     L03FB
+	bcc     L0566
 	inx
-L03FB:	sta     sreg
+L0566:	sta     sreg
 	stx     sreg+1
 	ldx     #$00
 	lda     _index
 	clc
 	adc     _state4
-	bcc     L0656
+	bcc     L0801
 	inx
-L0656:	sta     ptr1
+L0801:	sta     ptr1
 	txa
 	clc
 	adc     #>(_MetaSprite_Tile_R)
@@ -1344,9 +1587,9 @@ L0656:	sta     ptr1
 	ldx     #>(_SPRITES)
 	clc
 	adc     _index4
-	bcc     L0401
+	bcc     L056C
 	inx
-L0401:	sta     ptr1
+L056C:	sta     ptr1
 	stx     ptr1+1
 	ldy     _index
 	lda     _MetaSprite_Attrib_R,y
@@ -1363,9 +1606,9 @@ L0401:	sta     ptr1
 	ldx     #>(_SPRITES)
 	clc
 	adc     _index4
-	bcc     L0408
+	bcc     L0573
 	inx
-L0408:	sta     ptr1
+L0573:	sta     ptr1
 	stx     ptr1+1
 	ldy     _index
 	lda     _MetaSprite_X,y
@@ -1374,7 +1617,7 @@ L0408:	sta     ptr1
 	ldy     #$00
 	sta     (ptr1),y
 ;
-; ++index4;   
+; ++index4;
 ;
 	inc     _index4
 ;
@@ -1384,17 +1627,17 @@ L0408:	sta     ptr1
 	ldx     #>(_SPRITES)
 	clc
 	adc     _index4
-	bcc     L040F
+	bcc     L057A
 	inx
-L040F:	sta     ptr1
+L057A:	sta     ptr1
 	stx     ptr1+1
 	ldy     _index
 	lda     _MetaSprite_Y,y
 	clc
 	adc     _Y1
-	bcc     L0661
+	bcc     L080C
 	clc
-L0661:	adc     #$10
+L080C:	adc     #$10
 	ldy     #$00
 	sta     (ptr1),y
 ;
@@ -1408,17 +1651,17 @@ L0661:	adc     #$10
 	ldx     #>(_SPRITES)
 	clc
 	adc     _index4
-	bcc     L0417
+	bcc     L0582
 	inx
-L0417:	sta     sreg
+L0582:	sta     sreg
 	stx     sreg+1
 	ldx     #$00
 	lda     _index
 	clc
 	adc     _state4
-	bcc     L0659
+	bcc     L0804
 	inx
-L0659:	sta     ptr1
+L0804:	sta     ptr1
 	txa
 	clc
 	adc     #>(_MetaSprite_Tile_R)
@@ -1438,9 +1681,9 @@ L0659:	sta     ptr1
 	ldx     #>(_SPRITES)
 	clc
 	adc     _index4
-	bcc     L041D
+	bcc     L0588
 	inx
-L041D:	sta     ptr1
+L0588:	sta     ptr1
 	stx     ptr1+1
 	ldy     _index
 	lda     _MetaSprite_Attrib_R,y
@@ -1457,9 +1700,9 @@ L041D:	sta     ptr1
 	ldx     #>(_SPRITES)
 	clc
 	adc     _index4
-	bcc     L0424
+	bcc     L058F
 	inx
-L0424:	sta     ptr1
+L058F:	sta     ptr1
 	stx     ptr1+1
 	ldy     _index
 	lda     _MetaSprite_X,y
@@ -1475,15 +1718,15 @@ L0424:	sta     ptr1
 ; for (index = 0; index < 4; ++index)
 ;
 	inc     _index
-	jmp     L0663
+	jmp     L080E
 ;
 ; for (index = 0; index < 4; ++index)
 ;
-L0664:	lda     #$00
+L080F:	lda     #$00
 	sta     _index
-L0665:	lda     _index
+L0810:	lda     _index
 	cmp     #$04
-	bcc     L0667
+	bcc     L0812
 ;
 ; }
 ;
@@ -1491,13 +1734,13 @@ L0665:	lda     _index
 ;
 ; SPRITES[index4] = MetaSprite_Y[index] + Y1; // relative y + master y
 ;
-L0667:	lda     #<(_SPRITES)
+L0812:	lda     #<(_SPRITES)
 	ldx     #>(_SPRITES)
 	clc
 	adc     _index4
-	bcc     L0434
+	bcc     L059F
 	inx
-L0434:	sta     ptr1
+L059F:	sta     ptr1
 	stx     ptr1+1
 	ldy     _index
 	lda     _MetaSprite_Y,y
@@ -1516,17 +1759,17 @@ L0434:	sta     ptr1
 	ldx     #>(_SPRITES)
 	clc
 	adc     _index4
-	bcc     L043B
+	bcc     L05A6
 	inx
-L043B:	sta     sreg
+L05A6:	sta     sreg
 	stx     sreg+1
 	ldx     #$00
 	lda     _index
 	clc
 	adc     _state4
-	bcc     L065C
+	bcc     L0807
 	inx
-L065C:	sta     ptr1
+L0807:	sta     ptr1
 	txa
 	clc
 	adc     #>(_MetaSprite_Tile_L)
@@ -1546,9 +1789,9 @@ L065C:	sta     ptr1
 	ldx     #>(_SPRITES)
 	clc
 	adc     _index4
-	bcc     L0441
+	bcc     L05AC
 	inx
-L0441:	sta     ptr1
+L05AC:	sta     ptr1
 	stx     ptr1+1
 	ldy     _index
 	lda     _MetaSprite_Attrib_L,y
@@ -1565,9 +1808,9 @@ L0441:	sta     ptr1
 	ldx     #>(_SPRITES)
 	clc
 	adc     _index4
-	bcc     L0448
+	bcc     L05B3
 	inx
-L0448:	sta     ptr1
+L05B3:	sta     ptr1
 	stx     ptr1+1
 	ldy     _index
 	lda     _MetaSprite_X,y
@@ -1576,7 +1819,7 @@ L0448:	sta     ptr1
 	ldy     #$00
 	sta     (ptr1),y
 ;
-; ++index4;  
+; ++index4;
 ;
 	inc     _index4
 ;
@@ -1586,17 +1829,17 @@ L0448:	sta     ptr1
 	ldx     #>(_SPRITES)
 	clc
 	adc     _index4
-	bcc     L044F
+	bcc     L05BA
 	inx
-L044F:	sta     ptr1
+L05BA:	sta     ptr1
 	stx     ptr1+1
 	ldy     _index
 	lda     _MetaSprite_Y,y
 	clc
 	adc     _Y1
-	bcc     L0662
+	bcc     L080D
 	clc
-L0662:	adc     #$10
+L080D:	adc     #$10
 	ldy     #$00
 	sta     (ptr1),y
 ;
@@ -1610,17 +1853,17 @@ L0662:	adc     #$10
 	ldx     #>(_SPRITES)
 	clc
 	adc     _index4
-	bcc     L0457
+	bcc     L05C2
 	inx
-L0457:	sta     sreg
+L05C2:	sta     sreg
 	stx     sreg+1
 	ldx     #$00
 	lda     _index
 	clc
 	adc     _state4
-	bcc     L065F
+	bcc     L080A
 	inx
-L065F:	sta     ptr1
+L080A:	sta     ptr1
 	txa
 	clc
 	adc     #>(_MetaSprite_Tile_L)
@@ -1640,9 +1883,9 @@ L065F:	sta     ptr1
 	ldx     #>(_SPRITES)
 	clc
 	adc     _index4
-	bcc     L045D
+	bcc     L05C8
 	inx
-L045D:	sta     ptr1
+L05C8:	sta     ptr1
 	stx     ptr1+1
 	ldy     _index
 	lda     _MetaSprite_Attrib_L,y
@@ -1659,9 +1902,9 @@ L045D:	sta     ptr1
 	ldx     #>(_SPRITES)
 	clc
 	adc     _index4
-	bcc     L0464
+	bcc     L05CF
 	inx
-L0464:	sta     ptr1
+L05CF:	sta     ptr1
 	stx     ptr1+1
 	ldy     _index
 	lda     _MetaSprite_X,y
@@ -1670,14 +1913,14 @@ L0464:	sta     ptr1
 	ldy     #$00
 	sta     (ptr1),y
 ;
-; ++index4;  
+; ++index4;
 ;
 	inc     _index4
 ;
 ; for (index = 0; index < 4; ++index)
 ;
 	inc     _index
-	jmp     L0665
+	jmp     L0810
 
 .endproc
 
@@ -1695,7 +1938,7 @@ L0464:	sta     ptr1
 ; if (NametableB == 0)
 ;
 	lda     _NametableB
-	bne     L046A
+	bne     L05D5
 ;
 ; temp = C_MAP[collision_Index];
 ;
@@ -1704,13 +1947,13 @@ L0464:	sta     ptr1
 ;
 ; else
 ;
-	jmp     L066D
+	jmp     L0818
 ;
 ; temp = C_MAP2[collision_Index];
 ;
-L046A:	ldy     _collision_Index
+L05D5:	ldy     _collision_Index
 	lda     _C_MAP2,y
-L066D:	sta     _temp
+L0818:	sta     _temp
 ;
 ; collision += PLATFORM[temp];
 ;
@@ -1741,7 +1984,7 @@ L066D:	sta     _temp
 ;
 	lda     _joypad1
 	and     #$03
-	bne     L067F
+	bne     L082B
 ;
 ; walk_count = 0;
 ;
@@ -1750,18 +1993,18 @@ L066D:	sta     _temp
 ; if (X_speed >= 0)
 ;
 	ldx     _X_speed
-	bmi     L0485
+	bmi     L05F0
 ;
 ; if (X_speed >= 4)
 ;
 	lda     _X_speed
 	sec
 	sbc     #$04
-	bvs     L048B
+	bvs     L05F6
 	eor     #$80
-L048B:	asl     a
+L05F6:	asl     a
 	lda     #$00
-	bcc     L067E
+	bcc     L082A
 ;
 ; X_speed -= 4;
 ;
@@ -1769,22 +2012,22 @@ L048B:	asl     a
 	sec
 	sbc     #$04
 	sta     _X_speed
-	bpl     L067F
+	bpl     L082B
 ;
 ; else
 ;
-	jmp     L067F
+	jmp     L082B
 ;
 ; if (X_speed <= (-4))
 ;
-L0485:	lda     _X_speed
+L05F0:	lda     _X_speed
 	sec
 	sbc     #$FD
-	bvc     L0497
+	bvc     L0602
 	eor     #$80
-L0497:	asl     a
+L0602:	asl     a
 	lda     #$00
-	bcc     L067E
+	bcc     L082A
 ;
 ; X_speed += 4;
 ;
@@ -1792,21 +2035,21 @@ L0497:	asl     a
 	clc
 	adc     _X_speed
 	sta     _X_speed
-	bpl     L067F
+	bpl     L082B
 ;
 ; else
 ;
-	jmp     L067F
+	jmp     L082B
 ;
 ; X_speed = 0;
 ;
-L067E:	sta     _X_speed
+L082A:	sta     _X_speed
 ;
 ; if ((joypad1 & RIGHT) != 0)
 ;
-L067F:	lda     _joypad1
+L082B:	lda     _joypad1
 	and     #$01
-	beq     L0680
+	beq     L082C
 ;
 ; ++walk_count;
 ;
@@ -1820,7 +2063,7 @@ L067F:	lda     _joypad1
 ; if (X_speed >= 0)
 ;
 	ldx     _X_speed
-	bmi     L04A5
+	bmi     L0610
 ;
 ; X_speed += 2;
 ;
@@ -1828,24 +2071,24 @@ L067F:	lda     _joypad1
 	clc
 	adc     _X_speed
 	sta     _X_speed
-	bpl     L0680
+	bpl     L082C
 ;
 ; else
 ;
-	jmp     L0680
+	jmp     L082C
 ;
 ; X_speed += 8; // double friction
 ;
-L04A5:	lda     #$08
+L0610:	lda     #$08
 	clc
 	adc     _X_speed
 	sta     _X_speed
 ;
 ; if ((joypad1 & LEFT) != 0)
 ;
-L0680:	lda     _joypad1
+L082C:	lda     _joypad1
 	and     #$02
-	beq     L0682
+	beq     L082E
 ;
 ; ++walk_count;
 ;
@@ -1861,9 +2104,9 @@ L0680:	lda     _joypad1
 	lda     _X_speed
 	sec
 	sbc     #$01
-	bvc     L04B9
+	bvc     L0624
 	eor     #$80
-L04B9:	bpl     L0681
+L0624:	bpl     L082D
 ;
 ; X_speed -= 2;
 ;
@@ -1871,22 +2114,22 @@ L04B9:	bpl     L0681
 	sec
 	sbc     #$02
 	sta     _X_speed
-	bpl     L0682
+	bpl     L082E
 ;
 ; else
 ;
-	jmp     L0682
+	jmp     L082E
 ;
 ; X_speed -= 8; // double friction
 ;
-L0681:	lda     _X_speed
+L082D:	lda     _X_speed
 	sec
 	sbc     #$08
 	sta     _X_speed
 ;
 ; NametableB = Nametable;
 ;
-L0682:	lda     _Nametable
+L082E:	lda     _Nametable
 	sta     _NametableB
 ;
 ; Scroll_Adjusted_X = (X1 + Horiz_scroll + 3); // left
@@ -1895,13 +2138,13 @@ L0682:	lda     _Nametable
 	lda     _X1
 	clc
 	adc     _Horiz_scroll
-	bcc     L0679
+	bcc     L0825
 	inx
 	clc
-L0679:	adc     #$03
-	bcc     L04C6
+L0825:	adc     #$03
+	bcc     L0631
 	inx
-L04C6:	sta     _Scroll_Adjusted_X
+L0631:	sta     _Scroll_Adjusted_X
 	stx     _Scroll_Adjusted_X+1
 ;
 ; high_byte = Scroll_Adjusted_X >> 8;
@@ -1912,7 +2155,7 @@ L04C6:	sta     _Scroll_Adjusted_X
 ; if (high_byte != 0)
 ;
 	lda     _high_byte
-	beq     L0684
+	beq     L0830
 ;
 ; ++NametableB; // the other nametable's collision map
 ;
@@ -1927,7 +2170,7 @@ L04C6:	sta     _Scroll_Adjusted_X
 ; collision = 0;
 ;
 	lda     #$00
-L0684:	sta     _collision
+L0830:	sta     _collision
 ;
 ; collisionBot = 0;
 ;
@@ -1989,13 +2232,13 @@ L0684:	sta     _collision
 	lda     _X1
 	clc
 	adc     _Horiz_scroll
-	bcc     L067A
+	bcc     L0826
 	inx
 	clc
-L067A:	adc     #$0D
-	bcc     L04E8
+L0826:	adc     #$0D
+	bcc     L0653
 	inx
-L04E8:	sta     _Scroll_Adjusted_X
+L0653:	sta     _Scroll_Adjusted_X
 	stx     _Scroll_Adjusted_X+1
 ;
 ; high_byte = Scroll_Adjusted_X >> 8;
@@ -2006,7 +2249,7 @@ L04E8:	sta     _Scroll_Adjusted_X
 ; if (high_byte != 0)
 ;
 	lda     _high_byte
-	beq     L0685
+	beq     L0831
 ;
 ; ++NametableB; // the other nametable's collision map
 ;
@@ -2020,7 +2263,7 @@ L04E8:	sta     _Scroll_Adjusted_X
 ;
 ; collisionOld = collision;
 ;
-L0685:	lda     _collision
+L0831:	lda     _collision
 	sta     _collisionOld
 ;
 ; collision = 0;
@@ -2055,7 +2298,7 @@ L0685:	lda     _collision
 	adc     _collisionBot
 	sta     _collisionBot
 ;
-; collision = collisionOld+collision;
+; collision = collisionOld + collision;
 ;
 	lda     _collisionOld
 	clc
@@ -2084,7 +2327,7 @@ L0685:	lda     _collision
 ;
 	lda     _collision
 	cmp     #$32
-	bcc     L0686
+	bcc     L0832
 ;
 ; Y1 = 0x70;
 ;
@@ -2107,15 +2350,15 @@ L0685:	lda     _collision
 ;
 ; if (Y_speed >= 0)
 ;
-L0686:	ldx     _Y_speed
-	bmi     L050F
+L0832:	ldx     _Y_speed
+	bmi     L067A
 ;
 ; if ((Y1 & 0x0f) > 1) // only platform collide if nearly aligned to a metatile
 ;
 	lda     _Y1
 	and     #$0F
 	cmp     #$02
-	bcc     L0687
+	bcc     L0833
 ;
 ; collisionBot = 0;
 ;
@@ -2124,8 +2367,8 @@ L0686:	ldx     _Y_speed
 ;
 ; if (collisionBot == 0)
 ;
-L0687:	lda     _collisionBot
-	bne     L0688
+L0833:	lda     _collisionBot
+	bne     L0834
 ;
 ; Y_speed += 4; // gravity
 ;
@@ -2133,15 +2376,15 @@ L0687:	lda     _collisionBot
 	clc
 	adc     _Y_speed
 	sta     _Y_speed
-	bpl     L068C
+	bpl     L0838
 ;
 ; else
 ;
-	jmp     L068C
+	jmp     L0838
 ;
 ; Y_speed = 0; // collision = stop falling
 ;
-L0688:	lda     #$00
+L0834:	lda     #$00
 	sta     _Y_speed
 ;
 ; Y1 &= 0xf0;  // align to the metatile
@@ -2151,11 +2394,11 @@ L0688:	lda     #$00
 ;
 ; else
 ;
-	jmp     L06A4
+	jmp     L084F
 ;
 ; Y_speed += 4;
 ;
-L050F:	lda     #$04
+L067A:	lda     #$04
 	clc
 	adc     _Y_speed
 	sta     _Y_speed
@@ -2164,9 +2407,9 @@ L050F:	lda     #$04
 ;
 	lda     _collision
 	cmp     #$05
-	bcs     L068C
+	bcs     L0838
 	lda     _collision
-	beq     L068C
+	beq     L0838
 ;
 ; Y_speed = 1;
 ;
@@ -2178,31 +2421,31 @@ L050F:	lda     #$04
 	lda     #$02
 	clc
 	adc     _Y1
-L06A4:	sta     _Y1
+L084F:	sta     _Y1
 ;
 ; if (collision > 0)
 ;
-L068C:	lda     _collision
-	beq     L0690
+L0838:	lda     _collision
+	beq     L083C
 ;
 ; if (((joypad1 & A_BUTTON) != 0) && ((joypad1old & A_BUTTON) == 0))
 ;
 	lda     _joypad1
 	and     #$80
-	beq     L0690
+	beq     L083C
 	lda     _joypad1old
 	and     #$80
-	bne     L0690
+	bne     L083C
 ;
 ; Y_speed = -0x48; // 0xc8
 ;
 	lda     #$B8
 	sta     _Y_speed
 ;
-; if(collision > 0)
+; if (collision > 0)
 ;
 	lda     _collision
-	beq     L0690
+	beq     L083C
 ;
 ; audioBeep();
 ;
@@ -2210,17 +2453,17 @@ L068C:	lda     _collision
 ;
 ; if (X_speed >= 0)
 ;
-L0690:	ldx     _X_speed
-	bmi     L053E
+L083C:	ldx     _X_speed
+	bmi     L06A9
 ;
 ; if (X_speed > 0x20)
 ;
 	lda     _X_speed
 	sec
 	sbc     #$21
-	bvs     L0544
+	bvs     L06AF
 	eor     #$80
-L0544:	bpl     L0691
+L06AF:	bpl     L083D
 ;
 ; X_speed = 0x20;
 ;
@@ -2228,35 +2471,35 @@ L0544:	bpl     L0691
 ;
 ; else
 ;
-	jmp     L0677
+	jmp     L0822
 ;
 ; if (X_speed < (-0x20))
 ;
-L053E:	lda     _X_speed
+L06A9:	lda     _X_speed
 	sec
 	sbc     #$E0
-	bvc     L054C
+	bvc     L06B7
 	eor     #$80
-L054C:	bpl     L0691
+L06B7:	bpl     L083D
 ;
 ; X_speed = (-0x20); // 0xe0
 ;
 	lda     #$E0
-L0677:	sta     _X_speed
+L0822:	sta     _X_speed
 ;
 ; if (Y_speed >= 0)
 ;
-L0691:	ldx     _Y_speed
-	bmi     L0692
+L083D:	ldx     _Y_speed
+	bmi     L083E
 ;
 ; if (Y_speed > 0x20)
 ;
 	lda     _Y_speed
 	sec
 	sbc     #$21
-	bvs     L0556
+	bvs     L06C1
 	eor     #$80
-L0556:	bpl     L0692
+L06C1:	bpl     L083E
 ;
 ; Y_speed = 0x20;
 ;
@@ -2265,8 +2508,8 @@ L0556:	bpl     L0692
 ;
 ; if (X_speed != 0)
 ;
-L0692:	lda     _X_speed
-	jeq     L059B
+L083E:	lda     _X_speed
+	jeq     L0706
 ;
 ; Horiz_scroll_Old = Horiz_scroll;
 ;
@@ -2277,9 +2520,9 @@ L0692:	lda     _X_speed
 ;
 	ldx     #$00
 	lda     _X_speed
-	bpl     L0561
+	bpl     L06CC
 	dex
-L0561:	jsr     asrax4
+L06CC:	jsr     asrax4
 	clc
 	adc     _Horiz_scroll
 	sta     _Horiz_scroll
@@ -2295,22 +2538,22 @@ L0561:	jsr     asrax4
 	lda     _X1
 	clc
 	adc     _Horiz_scroll
-	bcc     L0671
+	bcc     L081C
 	inx
-L0671:	sta     ptr1
+L081C:	sta     ptr1
 	stx     ptr1+1
 	lda     _X_speed
 	asl     a
-	bcc     L0693
+	bcc     L083F
 	lda     #$03
-	jmp     L056B
-L0693:	lda     #$0D
-L056B:	clc
+	jmp     L06D6
+L083F:	lda     #$0D
+L06D6:	clc
 	adc     ptr1
 	ldx     ptr1+1
-	bcc     L0672
+	bcc     L081D
 	inx
-L0672:	sta     _Scroll_Adjusted_X
+L081D:	sta     _Scroll_Adjusted_X
 	stx     _Scroll_Adjusted_X+1
 ;
 ; high_byte = Scroll_Adjusted_X >> 8;
@@ -2321,7 +2564,7 @@ L0672:	sta     _Scroll_Adjusted_X
 ; if (high_byte != 0)
 ;
 	lda     _high_byte
-	beq     L0695
+	beq     L0841
 ;
 ; ++NametableB; // the other nametable's collision map
 ;
@@ -2333,12 +2576,12 @@ L0672:	sta     _Scroll_Adjusted_X
 	and     #$01
 	sta     _NametableB
 ;
-; collision = 0;                      // if on platform, ++collision
+; collision = 0;                       // if on platform, ++collision
 ;
 	lda     #$00
-L0695:	sta     _collision
+L0841:	sta     _collision
 ;
-; collision_Index = (((char)Scroll_Adjusted_X >> 4) + ((Y1 + (Y_speed <= 0 ? 31 : 32)) & 0xf0)); //top left if on ground / falling, bottom left if in air
+; collision_Index = (((char)Scroll_Adjusted_X >> 4) + ((Y1 + (Y_speed <= 0 ? 31 : 31)) & 0xf0)); //top left if on ground / falling, bottom left if in air
 ;
 	lda     _Scroll_Adjusted_X
 	lsr     a
@@ -2349,13 +2592,10 @@ L0695:	sta     _collision
 	lda     _Y_speed
 	sec
 	sbc     #$01
-	bvc     L057E
+	bvc     L0823
 	eor     #$80
-L057E:	bpl     L0696
-	lda     #$1F
-	jmp     L0581
-L0696:	lda     #$20
-L0581:	clc
+L0823:	lda     #$1F
+	clc
 	adc     _Y1
 	and     #$F0
 	clc
@@ -2386,7 +2626,7 @@ L0581:	clc
 ;
 	jsr     _Collision_Down
 ;
-; collision_Index = (((char)Scroll_Adjusted_X >> 4) + ((Y1) & 0xf0)); //top left if on ground / falling, bottom left if in air
+; collision_Index = (((char)Scroll_Adjusted_X >> 4) + ((Y1)&0xf0)); //top left if on ground / falling, bottom left if in air
 ;
 	lda     _Scroll_Adjusted_X
 	lsr     a
@@ -2408,9 +2648,9 @@ L0581:	clc
 ;
 	lda     _collision
 	cmp     #$05
-	bcs     L069A
+	bcs     L0845
 	lda     _collision
-	beq     L069A
+	beq     L0845
 ;
 ; Horiz_scroll = Horiz_scroll_Old;
 ;
@@ -2424,48 +2664,48 @@ L0581:	clc
 ;
 ; else
 ;
-	jmp     L069C
+	jmp     L0847
 ;
 ; if (X_speed >= 0)
 ;
-L069A:	ldx     _X_speed
-	bmi     L059C
+L0845:	ldx     _X_speed
+	bmi     L0707
 ;
 ; if (Horiz_scroll_Old > Horiz_scroll) // if pass 0, switch nametables
 ;
 	lda     _Horiz_scroll_Old
 	sec
 	sbc     _Horiz_scroll
-	bcc     L069B
-	beq     L069B
+	bcc     L0846
+	beq     L0846
 ;
 ; else
 ;
-	jmp     L06A5
+	jmp     L0850
 ;
 ; if (Horiz_scroll_Old < Horiz_scroll)
 ;
-L059C:	lda     _Horiz_scroll_Old
+L0707:	lda     _Horiz_scroll_Old
 	cmp     _Horiz_scroll
-	bcs     L069B
+	bcs     L0846
 ;
 ; ++Nametable; // if pass 0, switch nametables
 ;
-L06A5:	inc     _Nametable
+L0850:	inc     _Nametable
 ;
 ; Nametable &= 1; // keep it 1 or 0
 ;
-L069B:	lda     _Nametable
+L0846:	lda     _Nametable
 	and     #$01
 	sta     _Nametable
 ;
 ; Y1 += (Y_speed >> 4); // use the high nibble
 ;
-L059B:	ldx     #$00
-L069C:	lda     _Y_speed
-	bpl     L05AB
+L0706:	ldx     #$00
+L0847:	lda     _Y_speed
+	bpl     L0716
 	dex
-L05AB:	jsr     asrax4
+L0716:	jsr     asrax4
 	clc
 	adc     _Y1
 	sta     _Y1
@@ -2475,7 +2715,7 @@ L05AB:	jsr     asrax4
 	lda     _walk_count
 	cmp     #$20
 	ldx     #$00
-	bcc     L069D
+	bcc     L0848
 ;
 ; walk_count = 0;
 ;
@@ -2483,7 +2723,7 @@ L05AB:	jsr     asrax4
 ;
 ; state = Walk_Moves[(walk_count >> 3)]; // if not jumping
 ;
-L069D:	lda     _walk_count
+L0848:	lda     _walk_count
 	lsr     a
 	lsr     a
 	lsr     a
@@ -2500,7 +2740,7 @@ L069D:	lda     _walk_count
 ;
 	lda     _Y_speed
 	asl     a
-	bcc     L05B4
+	bcc     L071F
 ;
 ; state = 3;
 ;
@@ -2509,7 +2749,7 @@ L069D:	lda     _walk_count
 ;
 ; }
 ;
-L05B4:	rts
+L071F:	rts
 
 .endproc
 
@@ -2623,9 +2863,9 @@ L05B4:	rts
 ;
 	lda     #$00
 	sta     _index
-L06A6:	lda     _index
+L0851:	lda     _index
 	cmp     #$07
-	bcs     L06A7
+	bcs     L0852
 ;
 ; PPU_DATA = HUD[index];
 ;
@@ -2636,11 +2876,11 @@ L06A6:	lda     _index
 ; for (index = 0; index < sizeof(HUD); ++index)
 ;
 	inc     _index
-	jmp     L06A6
+	jmp     L0851
 ;
 ; PPU_ADDRESS = 0x24;
 ;
-L06A7:	lda     #$24
+L0852:	lda     #$24
 	sta     $2006
 ;
 ; PPU_ADDRESS = 0x74;
@@ -2652,9 +2892,9 @@ L06A7:	lda     #$24
 ;
 	lda     #$00
 	sta     _index
-L06A8:	lda     _index
+L0853:	lda     _index
 	cmp     #$07
-	bcs     L06A9
+	bcs     L0854
 ;
 ; PPU_DATA = HUD2[index];
 ;
@@ -2665,11 +2905,11 @@ L06A8:	lda     _index
 ; for (index = 0; index < sizeof(HUD); ++index)
 ;
 	inc     _index
-	jmp     L06A8
+	jmp     L0853
 ;
 ; PPU_ADDRESS = 0x27;
 ;
-L06A9:	lda     #$27
+L0854:	lda     #$27
 	sta     $2006
 ;
 ; PPU_ADDRESS = 0xc0;
@@ -2681,9 +2921,9 @@ L06A9:	lda     #$27
 ;
 	lda     #$00
 	sta     _index
-L06AA:	lda     _index
+L0855:	lda     _index
 	cmp     #$08
-	bcs     L064A
+	bcs     L07E4
 ;
 ; PPU_DATA = 0xff;
 ;
@@ -2693,11 +2933,11 @@ L06AA:	lda     _index
 ; for (index = 0; index < 8; ++index)
 ;
 	inc     _index
-	jmp     L06AA
+	jmp     L0855
 ;
 ; }
 ;
-L064A:	rts
+L07E4:	rts
 
 .endproc
 
@@ -2755,7 +2995,7 @@ L064A:	rts
 ;
 	lda     _joypad1
 	and     #$80
-	beq     L0391
+	beq     L03D6
 ;
 ; *((unsigned char*)0x4000) = 0x0f;
 ;
@@ -2769,7 +3009,7 @@ L064A:	rts
 ;
 ; }
 ;
-L0391:	rts
+L03D6:	rts
 
 .endproc
 
@@ -2787,6 +3027,776 @@ L0391:	rts
 ; }
 ;
 	rts
+
+.endproc
+
+; ---------------------------------------------------------------
+; void __near__ Buffer_Tiles (void)
+; ---------------------------------------------------------------
+
+.segment	"CODE"
+
+.proc	_Buffer_Tiles: near
+
+.segment	"CODE"
+
+;
+; index = 2;  // will be skipping the top 2 metatiles, it's the HUD
+;
+	lda     #$02
+	sta     _index
+;
+; index2 = 0;
+;
+	lda     #$00
+	sta     _index2
+;
+; index3 = 0;
+;
+	tax
+	sta     _index3
+;
+; while (index < 15){ 
+;
+	jmp     L085B
+;
+; if (Nametable_Plus == 0){ // drawing to the opposite screen that we're on
+;
+L0858:	lda     _Nametable_Plus
+	bne     L0859
+;
+; temp = C_MAP2[(Horiz_scroll_Plus>>4) + (index<<4)]; // get the metatile
+;
+	lda     _Horiz_scroll_Plus
+	lsr     a
+	lsr     a
+	lsr     a
+	lsr     a
+	sta     ptr1
+	stx     ptr1+1
+	lda     _index
+	jsr     aslax4
+	clc
+	adc     ptr1
+	sta     ptr1
+	txa
+	adc     ptr1+1
+	clc
+	adc     #>(_C_MAP2)
+	sta     ptr1+1
+	ldy     #<(_C_MAP2)
+;
+; else{
+;
+	jmp     L085C
+;
+; temp = C_MAP[(Horiz_scroll_Plus>>4) + (index<<4)]; // get the metatile
+;
+L0859:	lda     _Horiz_scroll_Plus
+	lsr     a
+	lsr     a
+	lsr     a
+	lsr     a
+	sta     ptr1
+	stx     ptr1+1
+	lda     _index
+	jsr     aslax4
+	clc
+	adc     ptr1
+	sta     ptr1
+	txa
+	adc     ptr1+1
+	clc
+	adc     #>(_C_MAP)
+	sta     ptr1+1
+	ldy     #<(_C_MAP)
+L085C:	lda     (ptr1),y
+	sta     _temp
+;
+; temp3 = MT_color[temp]; // get color, store temp
+;
+	ldy     _temp
+	lda     _MT_color,y
+	sta     _temp3
+;
+; temp <<= 2; // x 4
+;
+	lda     _temp
+	asl     a
+	asl     a
+	sta     _temp
+;
+; BUFFER1[index2] = METATILES[temp]; // get the tl tile
+;
+	lda     #<(_BUFFER1)
+	ldx     #>(_BUFFER1)
+	clc
+	adc     _index2
+	bcc     L0401
+	inx
+L0401:	sta     ptr1
+	stx     ptr1+1
+	ldy     _temp
+	lda     _METATILES,y
+	ldy     #$00
+	sta     (ptr1),y
+;
+; ++temp;
+;
+	inc     _temp
+;
+; BUFFER2[index2] = METATILES[temp]; // get the tr tile
+;
+	lda     #<(_BUFFER2)
+	ldx     #>(_BUFFER2)
+	clc
+	adc     _index2
+	bcc     L0408
+	inx
+L0408:	sta     ptr1
+	stx     ptr1+1
+	ldy     _temp
+	lda     _METATILES,y
+	ldy     #$00
+	sta     (ptr1),y
+;
+; ++temp;
+;
+	inc     _temp
+;
+; ++index2;
+;
+	inc     _index2
+;
+; BUFFER1[index2] = METATILES[temp]; // get the bl tile
+;
+	lda     #<(_BUFFER1)
+	ldx     #>(_BUFFER1)
+	clc
+	adc     _index2
+	bcc     L0410
+	inx
+L0410:	sta     ptr1
+	stx     ptr1+1
+	ldy     _temp
+	lda     _METATILES,y
+	ldy     #$00
+	sta     (ptr1),y
+;
+; ++temp;
+;
+	inc     _temp
+;
+; BUFFER2[index2] = METATILES[temp]; // get the br tile
+;
+	lda     #<(_BUFFER2)
+	ldx     #>(_BUFFER2)
+	clc
+	adc     _index2
+	bcc     L0417
+	inx
+L0417:	sta     ptr1
+	stx     ptr1+1
+	ldy     _temp
+	lda     _METATILES,y
+	ldy     #$00
+	sta     (ptr1),y
+;
+; ++temp;
+;
+	inc     _temp
+;
+; ++index2;
+;
+	inc     _index2
+;
+; ++index; // next round, difference is attribute table stuff
+;
+	inc     _index
+;
+; if (Nametable_Plus == 0){ // read from 2nd map
+;
+	ldx     #$00
+	lda     _Nametable_Plus
+	bne     L085A
+;
+; temp = C_MAP2[(Horiz_scroll_Plus>>4) + (index<<4)]; // get the metatile
+;
+	lda     _Horiz_scroll_Plus
+	lsr     a
+	lsr     a
+	lsr     a
+	lsr     a
+	sta     ptr1
+	stx     ptr1+1
+	lda     _index
+	jsr     aslax4
+	clc
+	adc     ptr1
+	sta     ptr1
+	txa
+	adc     ptr1+1
+	clc
+	adc     #>(_C_MAP2)
+	sta     ptr1+1
+	ldy     #<(_C_MAP2)
+;
+; else{
+;
+	jmp     L085D
+;
+; temp = C_MAP[(Horiz_scroll_Plus>>4) + (index<<4)]; // get the metatile
+;
+L085A:	lda     _Horiz_scroll_Plus
+	lsr     a
+	lsr     a
+	lsr     a
+	lsr     a
+	sta     ptr1
+	stx     ptr1+1
+	lda     _index
+	jsr     aslax4
+	clc
+	adc     ptr1
+	sta     ptr1
+	txa
+	adc     ptr1+1
+	clc
+	adc     #>(_C_MAP)
+	sta     ptr1+1
+	ldy     #<(_C_MAP)
+L085D:	lda     (ptr1),y
+	sta     _temp
+;
+; temp3 += (MT_color[temp] << 4); // get color, store temp
+;
+	ldy     _temp
+	lda     _MT_color,y
+	asl     a
+	asl     a
+	asl     a
+	asl     a
+	clc
+	adc     _temp3
+	sta     _temp3
+;
+; BUFFER5[index3] = temp3;
+;
+	ldy     _index3
+	lda     _temp3
+	sta     _BUFFER5,y
+;
+; temp <<= 2; // x 4
+;
+	lda     _temp
+	asl     a
+	asl     a
+	sta     _temp
+;
+; BUFFER1[index2] = METATILES[temp]; // get the tl tile
+;
+	lda     #<(_BUFFER1)
+	ldx     #>(_BUFFER1)
+	clc
+	adc     _index2
+	bcc     L0438
+	inx
+L0438:	sta     ptr1
+	stx     ptr1+1
+	ldy     _temp
+	lda     _METATILES,y
+	ldy     #$00
+	sta     (ptr1),y
+;
+; ++temp;
+;
+	inc     _temp
+;
+; BUFFER2[index2] = METATILES[temp]; // get the tr tile
+;
+	lda     #<(_BUFFER2)
+	ldx     #>(_BUFFER2)
+	clc
+	adc     _index2
+	bcc     L043F
+	inx
+L043F:	sta     ptr1
+	stx     ptr1+1
+	ldy     _temp
+	lda     _METATILES,y
+	ldy     #$00
+	sta     (ptr1),y
+;
+; ++temp;
+;
+	inc     _temp
+;
+; ++index2;
+;
+	inc     _index2
+;
+; BUFFER1[index2] = METATILES[temp]; // get the bl tile
+;
+	lda     #<(_BUFFER1)
+	ldx     #>(_BUFFER1)
+	clc
+	adc     _index2
+	bcc     L0447
+	inx
+L0447:	sta     ptr1
+	stx     ptr1+1
+	ldy     _temp
+	lda     _METATILES,y
+	ldy     #$00
+	sta     (ptr1),y
+;
+; ++temp;
+;
+	inc     _temp
+;
+; BUFFER2[index2] = METATILES[temp]; // get the br tile
+;
+	lda     #<(_BUFFER2)
+	ldx     #>(_BUFFER2)
+	clc
+	adc     _index2
+	bcc     L044E
+	inx
+L044E:	sta     ptr1
+	stx     ptr1+1
+	ldy     _temp
+	lda     _METATILES,y
+	ldy     #$00
+	sta     (ptr1),y
+;
+; ++index2;
+;
+	inc     _index2
+;
+; ++index3;
+;
+	inc     _index3
+;
+; ++index;
+;
+	inc     _index
+;
+; while (index < 15){ 
+;
+	ldx     #$00
+L085B:	lda     _index
+	cmp     #$0F
+	jcc     L0858
+;
+; }
+;
+	rts
+
+.endproc
+
+; ---------------------------------------------------------------
+; void __near__ Buffer_Tiles2 (void)
+; ---------------------------------------------------------------
+
+.segment	"CODE"
+
+.proc	_Buffer_Tiles2: near
+
+.segment	"CODE"
+
+;
+; index = 2; // will be skipping the top 2 metatiles, later
+;
+	lda     #$02
+	sta     _index
+;
+; index2 = 0;
+;
+	lda     #$00
+	sta     _index2
+;
+; index3 = 0;
+;
+	tax
+	sta     _index3
+;
+; while (index < 15){
+;
+	jmp     L0864
+;
+; if (Nametable_Plus == 0){ // drawing to the opposite screen that we're on
+;
+L0861:	lda     _Nametable_Plus
+	bne     L0862
+;
+; temp = C_MAP2[(Horiz_scroll_Plus>>4) + (index<<4)]; // get the mt
+;
+	lda     _Horiz_scroll_Plus
+	lsr     a
+	lsr     a
+	lsr     a
+	lsr     a
+	sta     ptr1
+	stx     ptr1+1
+	lda     _index
+	jsr     aslax4
+	clc
+	adc     ptr1
+	sta     ptr1
+	txa
+	adc     ptr1+1
+	clc
+	adc     #>(_C_MAP2)
+	sta     ptr1+1
+	ldy     #<(_C_MAP2)
+;
+; else{
+;
+	jmp     L0866
+;
+; temp = C_MAP[(Horiz_scroll_Plus>>4) + (index<<4)]; // get the mt
+;
+L0862:	lda     _Horiz_scroll_Plus
+	lsr     a
+	lsr     a
+	lsr     a
+	lsr     a
+	sta     ptr1
+	stx     ptr1+1
+	lda     _index
+	jsr     aslax4
+	clc
+	adc     ptr1
+	sta     ptr1
+	txa
+	adc     ptr1+1
+	clc
+	adc     #>(_C_MAP)
+	sta     ptr1+1
+	ldy     #<(_C_MAP)
+L0866:	lda     (ptr1),y
+	sta     _temp
+;
+; temp3 = MT_color[temp]; // get palette #, store temp3
+;
+	ldy     _temp
+	lda     _MT_color,y
+	sta     _temp3
+;
+; temp <<= 2; // x 4
+;
+	lda     _temp
+	asl     a
+	asl     a
+	sta     _temp
+;
+; BUFFER3[index2] = METATILES[temp]; // get the tl tile
+;
+	lda     #<(_BUFFER3)
+	ldx     #>(_BUFFER3)
+	clc
+	adc     _index2
+	bcc     L0475
+	inx
+L0475:	sta     ptr1
+	stx     ptr1+1
+	ldy     _temp
+	lda     _METATILES,y
+	ldy     #$00
+	sta     (ptr1),y
+;
+; ++temp;
+;
+	inc     _temp
+;
+; BUFFER4[index2] = METATILES[temp]; // get the tr tile
+;
+	lda     #<(_BUFFER4)
+	ldx     #>(_BUFFER4)
+	clc
+	adc     _index2
+	bcc     L047C
+	inx
+L047C:	sta     ptr1
+	stx     ptr1+1
+	ldy     _temp
+	lda     _METATILES,y
+	ldy     #$00
+	sta     (ptr1),y
+;
+; ++temp;
+;
+	inc     _temp
+;
+; ++index2;
+;
+	inc     _index2
+;
+; BUFFER3[index2] = METATILES[temp]; // get the bl tile
+;
+	lda     #<(_BUFFER3)
+	ldx     #>(_BUFFER3)
+	clc
+	adc     _index2
+	bcc     L0484
+	inx
+L0484:	sta     ptr1
+	stx     ptr1+1
+	ldy     _temp
+	lda     _METATILES,y
+	ldy     #$00
+	sta     (ptr1),y
+;
+; ++temp;
+;
+	inc     _temp
+;
+; BUFFER4[index2] = METATILES[temp]; // get the br tile
+;
+	lda     #<(_BUFFER4)
+	ldx     #>(_BUFFER4)
+	clc
+	adc     _index2
+	bcc     L048B
+	inx
+L048B:	sta     ptr1
+	stx     ptr1+1
+	ldy     _temp
+	lda     _METATILES,y
+	ldy     #$00
+	sta     (ptr1),y
+;
+; ++temp;
+;
+	inc     _temp
+;
+; ++index2;
+;
+	inc     _index2
+;
+; ++index; // next round, difference is attribute table stuff
+;
+	inc     _index
+;
+; if (Nametable_Plus == 0){ // read from 2nd map
+;
+	ldx     #$00
+	lda     _Nametable_Plus
+	bne     L0863
+;
+; temp = C_MAP2[(Horiz_scroll_Plus>>4) + (index<<4)]; // get the mt
+;
+	lda     _Horiz_scroll_Plus
+	lsr     a
+	lsr     a
+	lsr     a
+	lsr     a
+	sta     ptr1
+	stx     ptr1+1
+	lda     _index
+	jsr     aslax4
+	clc
+	adc     ptr1
+	sta     ptr1
+	txa
+	adc     ptr1+1
+	clc
+	adc     #>(_C_MAP2)
+	sta     ptr1+1
+	ldy     #<(_C_MAP2)
+;
+; else{
+;
+	jmp     L0867
+;
+; temp = C_MAP[(Horiz_scroll_Plus>>4) + (index<<4)]; // get the mt
+;
+L0863:	lda     _Horiz_scroll_Plus
+	lsr     a
+	lsr     a
+	lsr     a
+	lsr     a
+	sta     ptr1
+	stx     ptr1+1
+	lda     _index
+	jsr     aslax4
+	clc
+	adc     ptr1
+	sta     ptr1
+	txa
+	adc     ptr1+1
+	clc
+	adc     #>(_C_MAP)
+	sta     ptr1+1
+	ldy     #<(_C_MAP)
+L0867:	lda     (ptr1),y
+	sta     _temp
+;
+; temp3 += (MT_color[temp] << 4); // get palette #, store temp3
+;
+	ldy     _temp
+	lda     _MT_color,y
+	asl     a
+	asl     a
+	asl     a
+	asl     a
+	clc
+	adc     _temp3
+	sta     _temp3
+;
+; BUFFER6[index3] = temp3 << 2;
+;
+	lda     #<(_BUFFER6)
+	ldx     #>(_BUFFER6)
+	clc
+	adc     _index3
+	bcc     L04A6
+	inx
+L04A6:	sta     ptr1
+	stx     ptr1+1
+	lda     _temp3
+	asl     a
+	asl     a
+	ldy     #$00
+	sta     (ptr1),y
+;
+; temp <<= 2; // x 4
+;
+	lda     _temp
+	asl     a
+	asl     a
+	sta     _temp
+;
+; BUFFER3[index2] = METATILES[temp]; // get the tl tile
+;
+	lda     #<(_BUFFER3)
+	ldx     #>(_BUFFER3)
+	clc
+	adc     _index2
+	bcc     L04AC
+	inx
+L04AC:	sta     ptr1
+	stx     ptr1+1
+	ldy     _temp
+	lda     _METATILES,y
+	ldy     #$00
+	sta     (ptr1),y
+;
+; ++temp;
+;
+	inc     _temp
+;
+; BUFFER4[index2] = METATILES[temp]; // get the tr tile
+;
+	lda     #<(_BUFFER4)
+	ldx     #>(_BUFFER4)
+	clc
+	adc     _index2
+	bcc     L04B3
+	inx
+L04B3:	sta     ptr1
+	stx     ptr1+1
+	ldy     _temp
+	lda     _METATILES,y
+	ldy     #$00
+	sta     (ptr1),y
+;
+; ++temp;
+;
+	inc     _temp
+;
+; ++index2;
+;
+	inc     _index2
+;
+; BUFFER3[index2] = METATILES[temp]; // get the bl tile
+;
+	lda     #<(_BUFFER3)
+	ldx     #>(_BUFFER3)
+	clc
+	adc     _index2
+	bcc     L04BB
+	inx
+L04BB:	sta     ptr1
+	stx     ptr1+1
+	ldy     _temp
+	lda     _METATILES,y
+	ldy     #$00
+	sta     (ptr1),y
+;
+; ++temp;
+;
+	inc     _temp
+;
+; BUFFER4[index2] = METATILES[temp]; // get the br tile
+;
+	lda     #<(_BUFFER4)
+	ldx     #>(_BUFFER4)
+	clc
+	adc     _index2
+	bcc     L04C2
+	inx
+L04C2:	sta     ptr1
+	stx     ptr1+1
+	ldy     _temp
+	lda     _METATILES,y
+	ldy     #$00
+	sta     (ptr1),y
+;
+; ++index2;
+;
+	inc     _index2
+;
+; ++index3;
+;
+	inc     _index3
+;
+; ++index;
+;
+	inc     _index
+;
+; while (index < 15){
+;
+	ldx     #$00
+L0864:	lda     _index
+	cmp     #$0F
+	jcc     L0861
+;
+; for (index=0;index<8;++index){
+;
+	stx     _index
+L0865:	lda     _index
+	cmp     #$08
+	bcs     L04CA
+;
+; BUFFER7[index] = BUFFER5[index] + BUFFER6[index]; 
+;
+	lda     #<(_BUFFER7)
+	ldx     #>(_BUFFER7)
+	clc
+	adc     _index
+	bcc     L04D3
+	inx
+L04D3:	sta     sreg
+	stx     sreg+1
+	ldy     _index
+	lda     _BUFFER5,y
+	sta     ptr1
+	ldy     _index
+	lda     _BUFFER6,y
+	clc
+	adc     ptr1
+	ldy     #$00
+	sta     (sreg),y
+;
+; for (index=0;index<8;++index){
+;
+	inc     _index
+	jmp     L0865
+;
+; }
+;
+L04CA:	rts
 
 .endproc
 
@@ -2836,12 +3846,12 @@ L0391:	rts
 ;
 ; while (Game_Mode == TITLE_MODE)
 ;
-	jmp     L06B1
+	jmp     L086E
 ;
 ; while (NMI_flag == 0)
 ;
-L06AB:	lda     _NMI_flag
-	beq     L06AB
+L0868:	lda     _NMI_flag
+	beq     L0868
 ;
 ; Rotate_Palette();
 ;
@@ -2859,10 +3869,10 @@ L06AB:	lda     _NMI_flag
 ;
 	lda     _joypad1old
 	and     #$10
-	bne     L06B4
+	bne     L0873
 	lda     _joypad1
 	and     #$10
-	beq     L06B5
+	beq     L0874
 ;
 ; NMI_flag = 0;
 ;
@@ -2871,8 +3881,8 @@ L06AB:	lda     _NMI_flag
 ;
 ; while (NMI_flag == 0)
 ;
-L06AE:	lda     _NMI_flag
-	beq     L06AE
+L086B:	lda     _NMI_flag
+	beq     L086B
 ;
 ; All_Off();
 ;
@@ -2916,26 +3926,112 @@ L06AE:	lda     _NMI_flag
 ;
 ; NMI_flag = 0;
 ;
-L06B4:	lda     #$00
-L06B5:	sta     _NMI_flag
+L0873:	lda     #$00
+L0874:	sta     _NMI_flag
 ;
 ; while (Game_Mode == TITLE_MODE)
 ;
-L06B1:	lda     _Game_Mode
-	beq     L06AB
+L086E:	lda     _Game_Mode
+	beq     L0868
 ;
 ; while (Game_Mode == RUN_GAME_MODE)
 ;
-	jmp     L06B3
+	jmp     L0872
 ;
 ; while (NMI_flag == 0)
 ;
-L06B2:	lda     _NMI_flag
-	beq     L06B2
+L086F:	lda     _NMI_flag
+	beq     L086F
+;
+; if (PPU_flag != 0)
+;
+	lda     _PPU_flag
+	beq     L0870
+;
+; Do_Buffer2();
+;
+	jsr     _Do_Buffer2
+;
+; PPU_CTRL = 0x94;
+;
+L0870:	lda     #$94
+	sta     $2000
+;
+; SCROLL = 0;
+;
+	lda     #$00
+	sta     $2005
+;
+; SCROLL = 0; // resetting scroll position, again
+;
+	sta     $2005
+;
+; if (PPU_flag2 != 0)
+;
+	lda     _PPU_flag2
+	beq     L0871
+;
+; Do_Buffer3();
+;
+	jsr     _Do_Buffer3
+;
+; PPU_CTRL = 0x94;
+;
+L0871:	lda     #$94
+	sta     $2000
+;
+; SCROLL = 0;
+;
+	lda     #$00
+	sta     $2005
+;
+; SCROLL = 0; // resetting scroll position, again
+;
+	sta     $2005
 ;
 ; Get_Input();
 ;
 	jsr     _Get_Input
+;
+; PPU_flag = 0;
+;
+	lda     #$00
+	sta     _PPU_flag
+;
+; PPU_flag2 = 0;
+;
+	sta     _PPU_flag2
+;
+; SPRITE_ZERO[1] = 0xff; // switch tiles to a very small one
+;
+	lda     #$FF
+	sta     _SPRITE_ZERO+1
+;
+; SPRITE_ZERO[2] = 0x20; // attributes = behind the bg
+;
+	lda     #$20
+	sta     _SPRITE_ZERO+2
+;
+; Sprite_Zero();
+;
+	jsr     _Sprite_Zero
+;
+; SCROLL = Horiz_scroll;
+;
+	lda     _Horiz_scroll
+	sta     $2005
+;
+; SCROLL = 0; // setting the new scroll position
+;
+	lda     #$00
+	sta     $2005
+;
+; PPU_CTRL = (0x94 + Nametable);
+;
+	lda     _Nametable
+	clc
+	adc     #$94
+	sta     $2000
 ;
 ; move_logic();
 ;
@@ -2956,13 +4052,89 @@ L06B2:	lda     _NMI_flag
 ;
 ; while (Game_Mode == RUN_GAME_MODE)
 ;
-L06B3:	lda     _Game_Mode
+L0872:	lda     _Game_Mode
 	cmp     #$01
-	beq     L06B2
+	beq     L086F
 ;
 ; while (1)
 ;
-	jmp     L06B1
+	jmp     L086E
+
+.endproc
+
+; ---------------------------------------------------------------
+; void __near__ Do_Buffer (void)
+; ---------------------------------------------------------------
+
+.segment	"CODE"
+
+.proc	_Do_Buffer: near
+
+.segment	"CODE"
+
+;
+; Buffer_Tiles();
+;
+	jsr     _Buffer_Tiles
+;
+; Horiz_scroll_Plus += 0x10;
+;
+	lda     #$10
+	clc
+	adc     _Horiz_scroll_Plus
+	sta     _Horiz_scroll_Plus
+;
+; Buffer_Tiles2();
+;
+	jsr     _Buffer_Tiles2
+;
+; Horiz_scroll_Plus -= 0x10;
+;
+	lda     _Horiz_scroll_Plus
+	sec
+	sbc     #$10
+	sta     _Horiz_scroll_Plus
+;
+; }
+;
+	rts
+
+.endproc
+
+; ---------------------------------------------------------------
+; void __near__ Set_Sprite_Zero (void)
+; ---------------------------------------------------------------
+
+.segment	"CODE"
+
+.proc	_Set_Sprite_Zero: near
+
+.segment	"CODE"
+
+;
+; SPRITE_ZERO[0] = 0x16; // y
+;
+	lda     #$16
+	sta     _SPRITE_ZERO
+;
+; SPRITE_ZERO[1] = 0x30; // tile
+;
+	lda     #$30
+	sta     _SPRITE_ZERO+1
+;
+; SPRITE_ZERO[2] = 0;  // attributes
+;
+	lda     #$00
+	sta     _SPRITE_ZERO+2
+;
+; SPRITE_ZERO[3] = 0xd0; // x
+;
+	lda     #$D0
+	sta     _SPRITE_ZERO+3
+;
+; }
+;
+	rts
 
 .endproc
 

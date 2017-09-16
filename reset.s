@@ -140,17 +140,14 @@ nmi:
 	sta $2003
 	lda #2
 	sta $4014 ;push sprite data to OAM from $200-2ff
-	lda #$90
-	clc
-	adc _Nametable
+	lda #$94
 	sta $2000 ;nmi on
 	lda #$1e
 	sta $2001 ;screen on
 	lda $2002 ;reset the latch
-	lda _Horiz_scroll
-	sta $2005
 	lda #0
 	sta $2005
+	sta $2005 ;setting up the top of the screen, which is non-scrolling
 	
 	pla
 	tax
