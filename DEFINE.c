@@ -1,3 +1,5 @@
+#ifndef DEFINE_H
+#define DEFINE_H
 // let's define some things
 
 
@@ -209,6 +211,7 @@ const unsigned char MetaSprite_Tile_Right[] = { // tile numbers, right
 	8, 9, 0x18, 0x19,   // walk 4
 	10, 11, 0x1A, 0x1B,	// jump 1
 	12, 13, 0x1C, 0x1D, // jump 2
+	14, 15, 0x1E, 0x1F, // jump 3
 };	// jump
 
 const unsigned char MetaSprite_Attrib_Right[] = {0, 0, 0, 0}; // attributes = not flipped
@@ -223,7 +226,8 @@ const unsigned char MetaSprite_Tile_Left[] = { // tile numbers, left
 	7, 6, 0x17, 0x16, 	// walk 3
 	9, 8, 0x19, 0x18, 	// walk 4
 	11, 10, 0x1B, 0x1A, 	// jump 1
-	13, 12, 0x1D, 0x1C	// jump 2
+	13, 12, 0x1D, 0x1C,	// jump 2
+	15, 14, 0x1F, 0x1E, // jump 3
 }; 	
 
 const unsigned char MetaSprite_Attrib_Left[] = {0x40, 0x40, 0x40, 0x40}; // attributes = H flipped
@@ -255,3 +259,4 @@ void Get_Input(void);
 void Sprite_Zero(void);
 void Super_Fast_Write_PPU(void);
 void Super_Fast_Write_PPU2(void);
+#endif
