@@ -24,6 +24,7 @@ enum {TITLE_MODE, RUN_GAME_MODE, PAUSE_MODE, GAME_OVER_MODE, VICTORY_MODE, BOSS_
 // Globals
 // our startup code initialized all values to zero
 #pragma bss-name(push, "ZEROPAGE")
+unsigned int player_lives;
 unsigned char NMI_flag;
 unsigned char Frame_Count;
 unsigned char index;

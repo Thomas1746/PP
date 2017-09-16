@@ -34,8 +34,7 @@ void main(void)
 			if (((joypad1old & START) == 0) && ((joypad1 & START) != 0))
 			{
 				NMI_flag = 0;
-				while (NMI_flag == 0)
-					; // wait till v-blank
+				while (NMI_flag == 0); // wait till v-blank
 				// init game mode
 				All_Off();
 				Game_Mode = RUN_GAME_MODE;
@@ -55,8 +54,7 @@ void main(void)
 
 		while (Game_Mode == RUN_GAME_MODE)
 		{ // Game Mode
-			while (NMI_flag == 0)
-				; // wait till v-blank
+			while (NMI_flag == 0); // wait till v-blank
 
 			//every_frame();	// moved this to the nmi code in reset.s for greater stability
 			Get_Input();
@@ -207,7 +205,7 @@ void move_logic(void)
 	collision_Index = (((char)Scroll_Adjusted_X >> 4) + ((Y1 + 32) & 0xf0)); //bottom left
 	Collision_Down();
 	collisionBot += collision;										  // if on platform, ++collision
-	collision_Index = (((char)Scroll_Adjusted_X >> 4) + ((Y1)&0xf0)); //top left
+	collision_Index = (((char)Scroll_Adjusted_X >> 4) + ((Y1) & 0xf0)); //top left
 	Collision_Down();
 	NametableB = Nametable;
 	Scroll_Adjusted_X = (X1 + Horiz_scroll + 13); // left
@@ -224,7 +222,7 @@ void move_logic(void)
 	Collision_Down();														 // if on platform, ++collision
 	collisionBot += collision;
 	collision = collisionOld+collision;
-	collision_Index = (((char)Scroll_Adjusted_X >> 4) + ((Y1)&0xf0)); //top right
+	collision_Index = (((char)Scroll_Adjusted_X >> 4) + ((Y1) & 0xf0)); //top right
 	Collision_Down();												  // if on platform, ++collision
 	if (collision >= 50)
 	{

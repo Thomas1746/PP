@@ -1960,7 +1960,7 @@ L0684:	sta     _collision
 	adc     _collisionBot
 	sta     _collisionBot
 ;
-; collision_Index = (((char)Scroll_Adjusted_X >> 4) + ((Y1)&0xf0)); //top left
+; collision_Index = (((char)Scroll_Adjusted_X >> 4) + ((Y1) & 0xf0)); //top left
 ;
 	lda     _Scroll_Adjusted_X
 	lsr     a
@@ -2062,7 +2062,7 @@ L0685:	lda     _collision
 	adc     _collision
 	sta     _collision
 ;
-; collision_Index = (((char)Scroll_Adjusted_X >> 4) + ((Y1)&0xf0)); //top right
+; collision_Index = (((char)Scroll_Adjusted_X >> 4) + ((Y1) & 0xf0)); //top right
 ;
 	lda     _Scroll_Adjusted_X
 	lsr     a
@@ -2869,7 +2869,7 @@ L06AB:	lda     _NMI_flag
 	lda     #$00
 	sta     _NMI_flag
 ;
-; while (NMI_flag == 0)
+; while (NMI_flag == 0); // wait till v-blank
 ;
 L06AE:	lda     _NMI_flag
 	beq     L06AE
@@ -2928,7 +2928,7 @@ L06B1:	lda     _Game_Mode
 ;
 	jmp     L06B3
 ;
-; while (NMI_flag == 0)
+; while (NMI_flag == 0); // wait till v-blank
 ;
 L06B2:	lda     _NMI_flag
 	beq     L06B2
