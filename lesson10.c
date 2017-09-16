@@ -66,13 +66,13 @@ void main(void)
 
 			NMI_flag = 0;
 		}
+	}
 
-		if (Game_Mode == GAME_OVER_MODE) {
-			while (NMI_flag == 0);
+	if (Game_Mode == GAME_OVER_MODE) {
+		while (NMI_flag == 0);
 
-			Get_Input();
-			NMI_flag = 0;
-		}
+		Get_Input();
+		NMI_flag = 0;
 	}
 }
 
@@ -85,6 +85,14 @@ void update_Sprites(void)
 		for (index = 0; index < 4; ++index)
 		{
 			SPRITES[index4] = MetaSprite_Y[index] + Y1; // relative y + master y
+			++index4;
+			SPRITES[index4] = MetaSprite_Tile_R[index + state4]; // tile numbers
+			++index4;
+			SPRITES[index4] = MetaSprite_Attrib_R[index]; // attributes, all zero here
+			++index4;
+			SPRITES[index4] = MetaSprite_X[index] + X1; // relative x + master x
+			++index4;			
+			SPRITES[index4] = MetaSprite_Y[index] + Y1 + 16; // relative y + master y
 			++index4;
 			SPRITES[index4] = MetaSprite_Tile_R[index + state4]; // tile numbers
 			++index4;
@@ -105,7 +113,15 @@ void update_Sprites(void)
 			SPRITES[index4] = MetaSprite_Attrib_L[index]; // attributes, all zero here
 			++index4;
 			SPRITES[index4] = MetaSprite_X[index] + X1; // relative x + master x
+			++index4;		
+			SPRITES[index4] = MetaSprite_Y[index] + Y1 + 16; // relative y + master y
 			++index4;
+			SPRITES[index4] = MetaSprite_Tile_L[index + state4]; // tile numbers
+			++index4;
+			SPRITES[index4] = MetaSprite_Attrib_L[index]; // attributes, all zero here
+			++index4;
+			SPRITES[index4] = MetaSprite_X[index] + X1; // relative x + master x
+			++index4;		
 		}
 	}
 }
@@ -195,7 +211,7 @@ void move_logic(void)
 	collision = 0;
 	collisionBot = 0;
 	// we want to find which metatile in the collision map this point is in...is it solid?
-	collision_Index = (((char)Scroll_Adjusted_X >> 4) + ((Y1 + 16) & 0xf0)); //bottom left
+	collision_Index = (((char)Scroll_Adjusted_X >> 4) + ((Y1 + 32) & 0xf0)); //bottom left
 	Collision_Down();
 	collisionBot += collision;										  // if on platform, ++collision
 	collision_Index = (((char)Scroll_Adjusted_X >> 4) + ((Y1)&0xf0)); //top left
@@ -211,7 +227,7 @@ void move_logic(void)
 	collisionOld = collision;
 	collision = 0;
 	// we want to find which metatile in the collision map this point is in...is it solid?
-	collision_Index = (((char)Scroll_Adjusted_X >> 4) + ((Y1 + 16) & 0xf0)); //bottom right
+	collision_Index = (((char)Scroll_Adjusted_X >> 4) + ((Y1 + 32) & 0xf0)); //bottom right
 	Collision_Down();														 // if on platform, ++collision
 	collisionBot += collision;
 	collision = collisionOld+collision;
@@ -259,7 +275,14 @@ void move_logic(void)
 			Y_speed = -0x48; // 0xc8
 			if(collision > 0)
 			{
-				audioBeep();
+				playSquare(currentNote, SQUARE_ONE);
+				playSquare(currentNote + 4, SQUARE_TWO);
+				++currentNote;
+				if(currentNote == NOTE_CHOICE_MAX)
+				{
+					currentNote -= NOTE_CHOICE_MAX;
+				}
+				//audioBeep();
 			}
 		}
 	}
@@ -297,7 +320,9 @@ void move_logic(void)
 		}
 		// we want to find which metatile in the collision map this point is in...is it solid?
 		collision = 0;																				  // if on platform, ++collision
-		collision_Index = (((char)Scroll_Adjusted_X >> 4) + ((Y1 + (Y_speed <= 0 ? 15 : 16)) & 0xf0)); //top left if on ground / falling, bottom left if in air
+		collision_Index = (((char)Scroll_Adjusted_X >> 4) + ((Y1 + (Y_speed <= 0 ? 31 : 32)) & 0xf0)); //top left if on ground / falling, bottom left if in air
+		Collision_Down();
+		collision_Index = (((char)Scroll_Adjusted_X >> 4) + ((Y1 + 16) & 0xf0)); //top left if on ground / falling, bottom left if in air
 		Collision_Down();
 		collision_Index = (((char)Scroll_Adjusted_X >> 4) + ((Y1) & 0xf0)); //top left if on ground / falling, bottom left if in air
 		Collision_Down();
@@ -424,3 +449,4 @@ void Draw_Game_Over(void) {
 	Reset_Scroll();
 	Wait_Vblank();
 }
+

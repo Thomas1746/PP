@@ -1,16 +1,16 @@
-CC65 = ../bin/cc65
-CA65 = ../bin/ca65
-LD65 = ../bin/ld65
+CC65 = cc65
+CA65 = ca65
+LD65 = ld65
 NAME = lesson10
 
 
 $(NAME).nes: $(NAME).o reset.o asm4c.o nes.cfg
 	$(LD65) -C nes.cfg -o $(NAME).nes reset.o $(NAME).o asm4c.o nes.lib
 # if linux uncomment the next line
-#	rm *.o
+	rm *.o
 # windows	
-	del *.o	
-	@echo $(NAME).nes created
+#	del *.o	
+#	@echo $(NAME).nes created
 
 reset.o: reset.s
 	$(CA65) reset.s
@@ -26,7 +26,7 @@ $(NAME).s: $(NAME).c
 
 clean:
 # if linux uncomment the next line
-#	rm $(NAME).nes
+	rm $(NAME).nes
 # windows
-	del $(NAME).nes
+#	del $(NAME).nes
 

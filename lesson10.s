@@ -77,12 +77,55 @@
 	.import		_Wait_Vblank
 	.import		_UnRLE
 	.import		_Get_Input
+	.export		_currentNote
+	.export		_notes
 	.export		_setupAudio
 	.export		_audioUpdate
 	.export		_audioBeep
-	.export		_playScale
+	.export		_playSquare
 	.export		_main
 	.export		_Palette_Fade
+
+.segment	"DATA"
+
+_currentNote:
+	.byte	$00
+_notes:
+	.byte	$E0
+	.byte	$A0
+	.byte	$80
+	.byte	$3E
+	.byte	$0C
+	.byte	$E3
+	.byte	$B3
+	.byte	$92
+	.byte	$6F
+	.byte	$4C
+	.byte	$29
+	.byte	$0A
+	.byte	$EE
+	.byte	$D2
+	.byte	$B7
+	.byte	$9F
+	.byte	$88
+	.byte	$70
+	.byte	$5B
+	.byte	$48
+	.byte	$36
+	.byte	$24
+	.byte	$14
+	.byte	$05
+	.byte	$F6
+	.byte	$E8
+	.byte	$DB
+	.byte	$CF
+	.byte	$C3
+	.byte	$B8
+	.byte	$AF
+	.byte	$A4
+	.byte	$9B
+	.byte	$92
+	.byte	$8B
 
 .segment	"RODATA"
 
@@ -1275,9 +1318,9 @@ _C_MAP2:
 ; for (index = 0; index < sizeof(PALETTE); ++index)
 ;
 	sta     _index
-L065F:	lda     _index
+L06F8:	lda     _index
 	cmp     #$20
-	bcs     L05EC
+	bcs     L0684
 ;
 ; PPU_DATA = PALETTE[index];
 ;
@@ -1288,11 +1331,11 @@ L065F:	lda     _index
 ; for (index = 0; index < sizeof(PALETTE); ++index)
 ;
 	inc     _index
-	jmp     L065F
+	jmp     L06F8
 ;
 ; }
 ;
-L05EC:	rts
+L0684:	rts
 
 .endproc
 
@@ -1322,14 +1365,14 @@ L05EC:	rts
 ; if (direction == 0)
 ;
 	lda     _direction
-	jne     L0667
+	jne     L0708
 ;
 ; for (index = 0; index < 4; ++index)
 ;
 	sta     _index
-L0666:	lda     _index
+L0707:	lda     _index
 	cmp     #$04
-	bcc     L0669
+	bcc     L070A
 ;
 ; }
 ;
@@ -1337,13 +1380,13 @@ L0666:	lda     _index
 ;
 ; SPRITES[index4] = MetaSprite_Y[index] + Y1; // relative y + master y
 ;
-L0669:	lda     #<(_SPRITES)
+L070A:	lda     #<(_SPRITES)
 	ldx     #>(_SPRITES)
 	clc
 	adc     _index4
-	bcc     L0428
+	bcc     L0475
 	inx
-L0428:	sta     ptr1
+L0475:	sta     ptr1
 	stx     ptr1+1
 	ldy     _index
 	lda     _MetaSprite_Y,y
@@ -1362,17 +1405,17 @@ L0428:	sta     ptr1
 	ldx     #>(_SPRITES)
 	clc
 	adc     _index4
-	bcc     L042F
+	bcc     L047C
 	inx
-L042F:	sta     sreg
+L047C:	sta     sreg
 	stx     sreg+1
 	ldx     #$00
 	lda     _index
 	clc
 	adc     _state4
-	bcc     L0661
+	bcc     L06FA
 	inx
-L0661:	sta     ptr1
+L06FA:	sta     ptr1
 	txa
 	clc
 	adc     #>(_MetaSprite_Tile_R)
@@ -1392,9 +1435,9 @@ L0661:	sta     ptr1
 	ldx     #>(_SPRITES)
 	clc
 	adc     _index4
-	bcc     L0435
+	bcc     L0482
 	inx
-L0435:	sta     ptr1
+L0482:	sta     ptr1
 	stx     ptr1+1
 	ldy     _index
 	lda     _MetaSprite_Attrib_R,y
@@ -1411,9 +1454,103 @@ L0435:	sta     ptr1
 	ldx     #>(_SPRITES)
 	clc
 	adc     _index4
-	bcc     L043C
+	bcc     L0489
 	inx
-L043C:	sta     ptr1
+L0489:	sta     ptr1
+	stx     ptr1+1
+	ldy     _index
+	lda     _MetaSprite_X,y
+	clc
+	adc     _X1
+	ldy     #$00
+	sta     (ptr1),y
+;
+; ++index4;   
+;
+	inc     _index4
+;
+; SPRITES[index4] = MetaSprite_Y[index] + Y1 + 16; // relative y + master y
+;
+	lda     #<(_SPRITES)
+	ldx     #>(_SPRITES)
+	clc
+	adc     _index4
+	bcc     L0490
+	inx
+L0490:	sta     ptr1
+	stx     ptr1+1
+	ldy     _index
+	lda     _MetaSprite_Y,y
+	clc
+	adc     _Y1
+	bcc     L0705
+	clc
+L0705:	adc     #$10
+	ldy     #$00
+	sta     (ptr1),y
+;
+; ++index4;
+;
+	inc     _index4
+;
+; SPRITES[index4] = MetaSprite_Tile_R[index + state4]; // tile numbers
+;
+	lda     #<(_SPRITES)
+	ldx     #>(_SPRITES)
+	clc
+	adc     _index4
+	bcc     L0498
+	inx
+L0498:	sta     sreg
+	stx     sreg+1
+	ldx     #$00
+	lda     _index
+	clc
+	adc     _state4
+	bcc     L06FD
+	inx
+L06FD:	sta     ptr1
+	txa
+	clc
+	adc     #>(_MetaSprite_Tile_R)
+	sta     ptr1+1
+	ldy     #<(_MetaSprite_Tile_R)
+	lda     (ptr1),y
+	ldy     #$00
+	sta     (sreg),y
+;
+; ++index4;
+;
+	inc     _index4
+;
+; SPRITES[index4] = MetaSprite_Attrib_R[index]; // attributes, all zero here
+;
+	lda     #<(_SPRITES)
+	ldx     #>(_SPRITES)
+	clc
+	adc     _index4
+	bcc     L049E
+	inx
+L049E:	sta     ptr1
+	stx     ptr1+1
+	ldy     _index
+	lda     _MetaSprite_Attrib_R,y
+	ldy     #$00
+	sta     (ptr1),y
+;
+; ++index4;
+;
+	inc     _index4
+;
+; SPRITES[index4] = MetaSprite_X[index] + X1; // relative x + master x
+;
+	lda     #<(_SPRITES)
+	ldx     #>(_SPRITES)
+	clc
+	adc     _index4
+	bcc     L04A5
+	inx
+L04A5:	sta     ptr1
 	stx     ptr1+1
 	ldy     _index
 	lda     _MetaSprite_X,y
@@ -1429,15 +1566,15 @@ L043C:	sta     ptr1
 ; for (index = 0; index < 4; ++index)
 ;
 	inc     _index
-	jmp     L0666
+	jmp     L0707
 ;
 ; for (index = 0; index < 4; ++index)
 ;
-L0667:	lda     #$00
+L0708:	lda     #$00
 	sta     _index
-L0668:	lda     _index
+L0709:	lda     _index
 	cmp     #$04
-	bcc     L066A
+	bcc     L070B
 ;
 ; }
 ;
@@ -1445,13 +1582,13 @@ L0668:	lda     _index
 ;
 ; SPRITES[index4] = MetaSprite_Y[index] + Y1; // relative y + master y
 ;
-L066A:	lda     #<(_SPRITES)
+L070B:	lda     #<(_SPRITES)
 	ldx     #>(_SPRITES)
 	clc
 	adc     _index4
-	bcc     L044C
+	bcc     L04B5
 	inx
-L044C:	sta     ptr1
+L04B5:	sta     ptr1
 	stx     ptr1+1
 	ldy     _index
 	lda     _MetaSprite_Y,y
@@ -1470,17 +1607,17 @@ L044C:	sta     ptr1
 	ldx     #>(_SPRITES)
 	clc
 	adc     _index4
-	bcc     L0453
+	bcc     L04BC
 	inx
-L0453:	sta     sreg
+L04BC:	sta     sreg
 	stx     sreg+1
 	ldx     #$00
 	lda     _index
 	clc
 	adc     _state4
-	bcc     L0664
+	bcc     L0700
 	inx
-L0664:	sta     ptr1
+L0700:	sta     ptr1
 	txa
 	clc
 	adc     #>(_MetaSprite_Tile_L)
@@ -1500,9 +1637,9 @@ L0664:	sta     ptr1
 	ldx     #>(_SPRITES)
 	clc
 	adc     _index4
-	bcc     L0459
+	bcc     L04C2
 	inx
-L0459:	sta     ptr1
+L04C2:	sta     ptr1
 	stx     ptr1+1
 	ldy     _index
 	lda     _MetaSprite_Attrib_L,y
@@ -1519,9 +1656,9 @@ L0459:	sta     ptr1
 	ldx     #>(_SPRITES)
 	clc
 	adc     _index4
-	bcc     L0460
+	bcc     L04C9
 	inx
-L0460:	sta     ptr1
+L04C9:	sta     ptr1
 	stx     ptr1+1
 	ldy     _index
 	lda     _MetaSprite_X,y
@@ -1530,14 +1667,108 @@ L0460:	sta     ptr1
 	ldy     #$00
 	sta     (ptr1),y
 ;
+; ++index4;  
+;
+	inc     _index4
+;
+; SPRITES[index4] = MetaSprite_Y[index] + Y1 + 16; // relative y + master y
+;
+	lda     #<(_SPRITES)
+	ldx     #>(_SPRITES)
+	clc
+	adc     _index4
+	bcc     L04D0
+	inx
+L04D0:	sta     ptr1
+	stx     ptr1+1
+	ldy     _index
+	lda     _MetaSprite_Y,y
+	clc
+	adc     _Y1
+	bcc     L0706
+	clc
+L0706:	adc     #$10
+	ldy     #$00
+	sta     (ptr1),y
+;
 ; ++index4;
+;
+	inc     _index4
+;
+; SPRITES[index4] = MetaSprite_Tile_L[index + state4]; // tile numbers
+;
+	lda     #<(_SPRITES)
+	ldx     #>(_SPRITES)
+	clc
+	adc     _index4
+	bcc     L04D8
+	inx
+L04D8:	sta     sreg
+	stx     sreg+1
+	ldx     #$00
+	lda     _index
+	clc
+	adc     _state4
+	bcc     L0703
+	inx
+L0703:	sta     ptr1
+	txa
+	clc
+	adc     #>(_MetaSprite_Tile_L)
+	sta     ptr1+1
+	ldy     #<(_MetaSprite_Tile_L)
+	lda     (ptr1),y
+	ldy     #$00
+	sta     (sreg),y
+;
+; ++index4;
+;
+	inc     _index4
+;
+; SPRITES[index4] = MetaSprite_Attrib_L[index]; // attributes, all zero here
+;
+	lda     #<(_SPRITES)
+	ldx     #>(_SPRITES)
+	clc
+	adc     _index4
+	bcc     L04DE
+	inx
+L04DE:	sta     ptr1
+	stx     ptr1+1
+	ldy     _index
+	lda     _MetaSprite_Attrib_L,y
+	ldy     #$00
+	sta     (ptr1),y
+;
+; ++index4;
+;
+	inc     _index4
+;
+; SPRITES[index4] = MetaSprite_X[index] + X1; // relative x + master x
+;
+	lda     #<(_SPRITES)
+	ldx     #>(_SPRITES)
+	clc
+	adc     _index4
+	bcc     L04E5
+	inx
+L04E5:	sta     ptr1
+	stx     ptr1+1
+	ldy     _index
+	lda     _MetaSprite_X,y
+	clc
+	adc     _X1
+	ldy     #$00
+	sta     (ptr1),y
+;
+; ++index4;  
 ;
 	inc     _index4
 ;
 ; for (index = 0; index < 4; ++index)
 ;
 	inc     _index
-	jmp     L0668
+	jmp     L0709
 
 .endproc
 
@@ -1555,7 +1786,7 @@ L0460:	sta     ptr1
 ; if (NametableB == 0)
 ;
 	lda     _NametableB
-	bne     L0466
+	bne     L04EB
 ;
 ; temp = C_MAP[collision_Index];
 ;
@@ -1564,13 +1795,13 @@ L0460:	sta     ptr1
 ;
 ; else
 ;
-	jmp     L0670
+	jmp     L0711
 ;
 ; temp = C_MAP2[collision_Index];
 ;
-L0466:	ldy     _collision_Index
+L04EB:	ldy     _collision_Index
 	lda     _C_MAP2,y
-L0670:	sta     _temp
+L0711:	sta     _temp
 ;
 ; collision += PLATFORM[temp];
 ;
@@ -1601,7 +1832,7 @@ L0670:	sta     _temp
 ;
 	lda     _joypad1
 	and     #$03
-	bne     L0682
+	bne     L0723
 ;
 ; walk_count = 0;
 ;
@@ -1610,18 +1841,18 @@ L0670:	sta     _temp
 ; if (X_speed >= 0)
 ;
 	ldx     _X_speed
-	bmi     L0481
+	bmi     L0506
 ;
 ; if (X_speed >= 4)
 ;
 	lda     _X_speed
 	sec
 	sbc     #$04
-	bvs     L0487
+	bvs     L050C
 	eor     #$80
-L0487:	asl     a
+L050C:	asl     a
 	lda     #$00
-	bcc     L0681
+	bcc     L0722
 ;
 ; X_speed -= 4;
 ;
@@ -1629,22 +1860,22 @@ L0487:	asl     a
 	sec
 	sbc     #$04
 	sta     _X_speed
-	bpl     L0682
+	bpl     L0723
 ;
 ; else
 ;
-	jmp     L0682
+	jmp     L0723
 ;
 ; if (X_speed <= (-4))
 ;
-L0481:	lda     _X_speed
+L0506:	lda     _X_speed
 	sec
 	sbc     #$FD
-	bvc     L0493
+	bvc     L0518
 	eor     #$80
-L0493:	asl     a
+L0518:	asl     a
 	lda     #$00
-	bcc     L0681
+	bcc     L0722
 ;
 ; X_speed += 4;
 ;
@@ -1652,21 +1883,21 @@ L0493:	asl     a
 	clc
 	adc     _X_speed
 	sta     _X_speed
-	bpl     L0682
+	bpl     L0723
 ;
 ; else
 ;
-	jmp     L0682
+	jmp     L0723
 ;
 ; X_speed = 0;
 ;
-L0681:	sta     _X_speed
+L0722:	sta     _X_speed
 ;
 ; if ((joypad1 & RIGHT) != 0)
 ;
-L0682:	lda     _joypad1
+L0723:	lda     _joypad1
 	and     #$01
-	beq     L0683
+	beq     L0724
 ;
 ; ++walk_count;
 ;
@@ -1680,7 +1911,7 @@ L0682:	lda     _joypad1
 ; if (X_speed >= 0)
 ;
 	ldx     _X_speed
-	bmi     L04A1
+	bmi     L0526
 ;
 ; X_speed += 2;
 ;
@@ -1688,24 +1919,24 @@ L0682:	lda     _joypad1
 	clc
 	adc     _X_speed
 	sta     _X_speed
-	bpl     L0683
+	bpl     L0724
 ;
 ; else
 ;
-	jmp     L0683
+	jmp     L0724
 ;
 ; X_speed += 8; // double friction
 ;
-L04A1:	lda     #$08
+L0526:	lda     #$08
 	clc
 	adc     _X_speed
 	sta     _X_speed
 ;
 ; if ((joypad1 & LEFT) != 0)
 ;
-L0683:	lda     _joypad1
+L0724:	lda     _joypad1
 	and     #$02
-	beq     L0685
+	beq     L0726
 ;
 ; ++walk_count;
 ;
@@ -1721,9 +1952,9 @@ L0683:	lda     _joypad1
 	lda     _X_speed
 	sec
 	sbc     #$01
-	bvc     L04B5
+	bvc     L053A
 	eor     #$80
-L04B5:	bpl     L0684
+L053A:	bpl     L0725
 ;
 ; X_speed -= 2;
 ;
@@ -1731,22 +1962,22 @@ L04B5:	bpl     L0684
 	sec
 	sbc     #$02
 	sta     _X_speed
-	bpl     L0685
+	bpl     L0726
 ;
 ; else
 ;
-	jmp     L0685
+	jmp     L0726
 ;
 ; X_speed -= 8; // double friction
 ;
-L0684:	lda     _X_speed
+L0725:	lda     _X_speed
 	sec
 	sbc     #$08
 	sta     _X_speed
 ;
 ; NametableB = Nametable;
 ;
-L0685:	lda     _Nametable
+L0726:	lda     _Nametable
 	sta     _NametableB
 ;
 ; Scroll_Adjusted_X = (X1 + Horiz_scroll + 3); // left
@@ -1755,13 +1986,13 @@ L0685:	lda     _Nametable
 	lda     _X1
 	clc
 	adc     _Horiz_scroll
-	bcc     L067C
+	bcc     L071D
 	inx
 	clc
-L067C:	adc     #$03
-	bcc     L04C2
+L071D:	adc     #$03
+	bcc     L0547
 	inx
-L04C2:	sta     _Scroll_Adjusted_X
+L0547:	sta     _Scroll_Adjusted_X
 	stx     _Scroll_Adjusted_X+1
 ;
 ; high_byte = Scroll_Adjusted_X >> 8;
@@ -1772,7 +2003,7 @@ L04C2:	sta     _Scroll_Adjusted_X
 ; if (high_byte != 0)
 ;
 	lda     _high_byte
-	beq     L0687
+	beq     L0728
 ;
 ; ++NametableB; // the other nametable's collision map
 ;
@@ -1787,13 +2018,13 @@ L04C2:	sta     _Scroll_Adjusted_X
 ; collision = 0;
 ;
 	lda     #$00
-L0687:	sta     _collision
+L0728:	sta     _collision
 ;
 ; collisionBot = 0;
 ;
 	sta     _collisionBot
 ;
-; collision_Index = (((char)Scroll_Adjusted_X >> 4) + ((Y1 + 16) & 0xf0)); //bottom left
+; collision_Index = (((char)Scroll_Adjusted_X >> 4) + ((Y1 + 32) & 0xf0)); //bottom left
 ;
 	lda     _Scroll_Adjusted_X
 	lsr     a
@@ -1803,7 +2034,7 @@ L0687:	sta     _collision
 	sta     ptr1
 	lda     _Y1
 	clc
-	adc     #$10
+	adc     #$20
 	and     #$F0
 	clc
 	adc     ptr1
@@ -1849,13 +2080,13 @@ L0687:	sta     _collision
 	lda     _X1
 	clc
 	adc     _Horiz_scroll
-	bcc     L067D
+	bcc     L071E
 	inx
 	clc
-L067D:	adc     #$0D
-	bcc     L04E4
+L071E:	adc     #$0D
+	bcc     L0569
 	inx
-L04E4:	sta     _Scroll_Adjusted_X
+L0569:	sta     _Scroll_Adjusted_X
 	stx     _Scroll_Adjusted_X+1
 ;
 ; high_byte = Scroll_Adjusted_X >> 8;
@@ -1866,7 +2097,7 @@ L04E4:	sta     _Scroll_Adjusted_X
 ; if (high_byte != 0)
 ;
 	lda     _high_byte
-	beq     L0688
+	beq     L0729
 ;
 ; ++NametableB; // the other nametable's collision map
 ;
@@ -1880,7 +2111,7 @@ L04E4:	sta     _Scroll_Adjusted_X
 ;
 ; collisionOld = collision;
 ;
-L0688:	lda     _collision
+L0729:	lda     _collision
 	sta     _collisionOld
 ;
 ; collision = 0;
@@ -1888,7 +2119,7 @@ L0688:	lda     _collision
 	lda     #$00
 	sta     _collision
 ;
-; collision_Index = (((char)Scroll_Adjusted_X >> 4) + ((Y1 + 16) & 0xf0)); //bottom right
+; collision_Index = (((char)Scroll_Adjusted_X >> 4) + ((Y1 + 32) & 0xf0)); //bottom right
 ;
 	lda     _Scroll_Adjusted_X
 	lsr     a
@@ -1898,7 +2129,7 @@ L0688:	lda     _collision
 	sta     ptr1
 	lda     _Y1
 	clc
-	adc     #$10
+	adc     #$20
 	and     #$F0
 	clc
 	adc     ptr1
@@ -1944,7 +2175,7 @@ L0688:	lda     _collision
 ;
 	lda     _collision
 	cmp     #$32
-	bcc     L0689
+	bcc     L072A
 ;
 ; Y1 = 0x70;
 ;
@@ -1976,15 +2207,15 @@ L0688:	lda     _collision
 ;
 ; if (Y_speed >= 0)
 ;
-L0689:	ldx     _Y_speed
-	bmi     L050E
+L072A:	ldx     _Y_speed
+	bmi     L0593
 ;
 ; if ((Y1 & 0x0f) > 1) // only platform collide if nearly aligned to a metatile
 ;
 	lda     _Y1
 	and     #$0F
 	cmp     #$02
-	bcc     L068A
+	bcc     L072B
 ;
 ; collisionBot = 0;
 ;
@@ -1993,8 +2224,8 @@ L0689:	ldx     _Y_speed
 ;
 ; if (collisionBot == 0)
 ;
-L068A:	lda     _collisionBot
-	bne     L068B
+L072B:	lda     _collisionBot
+	bne     L072C
 ;
 ; Y_speed += 4; // gravity
 ;
@@ -2002,15 +2233,15 @@ L068A:	lda     _collisionBot
 	clc
 	adc     _Y_speed
 	sta     _Y_speed
-	bpl     L068F
+	bpl     L0730
 ;
 ; else
 ;
-	jmp     L068F
+	jmp     L0730
 ;
 ; Y_speed = 0; // collision = stop falling
 ;
-L068B:	lda     #$00
+L072C:	lda     #$00
 	sta     _Y_speed
 ;
 ; Y1 &= 0xf0;  // align to the metatile
@@ -2020,11 +2251,11 @@ L068B:	lda     #$00
 ;
 ; else
 ;
-	jmp     L06A6
+	jmp     L0748
 ;
 ; Y_speed += 4;
 ;
-L050E:	lda     #$04
+L0593:	lda     #$04
 	clc
 	adc     _Y_speed
 	sta     _Y_speed
@@ -2033,9 +2264,9 @@ L050E:	lda     #$04
 ;
 	lda     _collision
 	cmp     #$05
-	bcs     L068F
+	bcs     L0730
 	lda     _collision
-	beq     L068F
+	beq     L0730
 ;
 ; Y_speed = 1;
 ;
@@ -2047,21 +2278,21 @@ L050E:	lda     #$04
 	lda     #$02
 	clc
 	adc     _Y1
-L06A6:	sta     _Y1
+L0748:	sta     _Y1
 ;
 ; if (collision > 0)
 ;
-L068F:	lda     _collision
-	beq     L0693
+L0730:	lda     _collision
+	beq     L0734
 ;
 ; if (((joypad1 & A_BUTTON) != 0) && ((joypad1old & A_BUTTON) == 0))
 ;
 	lda     _joypad1
 	and     #$80
-	beq     L0693
+	beq     L0734
 	lda     _joypad1old
 	and     #$80
-	bne     L0693
+	bne     L0734
 ;
 ; Y_speed = -0x48; // 0xc8
 ;
@@ -2071,25 +2302,53 @@ L068F:	lda     _collision
 ; if(collision > 0)
 ;
 	lda     _collision
-	beq     L0693
+	beq     L0734
 ;
-; audioBeep();
+; playSquare(currentNote, SQUARE_ONE);
 ;
-	jsr     _audioBeep
+	lda     _currentNote
+	jsr     pusha
+	lda     #$00
+	jsr     _playSquare
+;
+; playSquare(currentNote + 4, SQUARE_TWO);
+;
+	lda     _currentNote
+	clc
+	adc     #$04
+	jsr     pusha
+	lda     #$01
+	jsr     _playSquare
+;
+; ++currentNote;
+;
+	inc     _currentNote
+;
+; if(currentNote == NOTE_CHOICE_MAX)
+;
+	lda     _currentNote
+	cmp     #$23
+	bne     L0734
+;
+; currentNote -= NOTE_CHOICE_MAX;
+;
+	sec
+	sbc     #$23
+	sta     _currentNote
 ;
 ; if (X_speed >= 0)
 ;
-L0693:	ldx     _X_speed
-	bmi     L053D
+L0734:	ldx     _X_speed
+	bmi     L05CD
 ;
 ; if (X_speed > 0x20)
 ;
 	lda     _X_speed
 	sec
 	sbc     #$21
-	bvs     L0543
+	bvs     L05D3
 	eor     #$80
-L0543:	bpl     L0694
+L05D3:	bpl     L0735
 ;
 ; X_speed = 0x20;
 ;
@@ -2097,35 +2356,35 @@ L0543:	bpl     L0694
 ;
 ; else
 ;
-	jmp     L067A
+	jmp     L071B
 ;
 ; if (X_speed < (-0x20))
 ;
-L053D:	lda     _X_speed
+L05CD:	lda     _X_speed
 	sec
 	sbc     #$E0
-	bvc     L054B
+	bvc     L05DB
 	eor     #$80
-L054B:	bpl     L0694
+L05DB:	bpl     L0735
 ;
 ; X_speed = (-0x20); // 0xe0
 ;
 	lda     #$E0
-L067A:	sta     _X_speed
+L071B:	sta     _X_speed
 ;
 ; if (Y_speed >= 0)
 ;
-L0694:	ldx     _Y_speed
-	bmi     L0695
+L0735:	ldx     _Y_speed
+	bmi     L0736
 ;
 ; if (Y_speed > 0x20)
 ;
 	lda     _Y_speed
 	sec
 	sbc     #$21
-	bvs     L0555
+	bvs     L05E5
 	eor     #$80
-L0555:	bpl     L0695
+L05E5:	bpl     L0736
 ;
 ; Y_speed = 0x20;
 ;
@@ -2134,8 +2393,8 @@ L0555:	bpl     L0695
 ;
 ; if (X_speed != 0)
 ;
-L0695:	lda     _X_speed
-	jeq     L0592
+L0736:	lda     _X_speed
+	jeq     L062A
 ;
 ; Horiz_scroll_Old = Horiz_scroll;
 ;
@@ -2146,9 +2405,9 @@ L0695:	lda     _X_speed
 ;
 	ldx     #$00
 	lda     _X_speed
-	bpl     L0560
+	bpl     L05F0
 	dex
-L0560:	jsr     asrax4
+L05F0:	jsr     asrax4
 	clc
 	adc     _Horiz_scroll
 	sta     _Horiz_scroll
@@ -2164,22 +2423,22 @@ L0560:	jsr     asrax4
 	lda     _X1
 	clc
 	adc     _Horiz_scroll
-	bcc     L0674
+	bcc     L0715
 	inx
-L0674:	sta     ptr1
+L0715:	sta     ptr1
 	stx     ptr1+1
 	lda     _X_speed
 	asl     a
-	bcc     L0696
+	bcc     L0737
 	lda     #$03
-	jmp     L056A
-L0696:	lda     #$0D
-L056A:	clc
+	jmp     L05FA
+L0737:	lda     #$0D
+L05FA:	clc
 	adc     ptr1
 	ldx     ptr1+1
-	bcc     L0675
+	bcc     L0716
 	inx
-L0675:	sta     _Scroll_Adjusted_X
+L0716:	sta     _Scroll_Adjusted_X
 	stx     _Scroll_Adjusted_X+1
 ;
 ; high_byte = Scroll_Adjusted_X >> 8;
@@ -2190,7 +2449,7 @@ L0675:	sta     _Scroll_Adjusted_X
 ; if (high_byte != 0)
 ;
 	lda     _high_byte
-	beq     L0698
+	beq     L0739
 ;
 ; ++NametableB; // the other nametable's collision map
 ;
@@ -2205,9 +2464,9 @@ L0675:	sta     _Scroll_Adjusted_X
 ; collision = 0;                      // if on platform, ++collision
 ;
 	lda     #$00
-L0698:	sta     _collision
+L0739:	sta     _collision
 ;
-; collision_Index = (((char)Scroll_Adjusted_X >> 4) + ((Y1 + (Y_speed <= 0 ? 15 : 16)) & 0xf0)); //top left if on ground / falling, bottom left if in air
+; collision_Index = (((char)Scroll_Adjusted_X >> 4) + ((Y1 + (Y_speed <= 0 ? 31 : 32)) & 0xf0)); //top left if on ground / falling, bottom left if in air
 ;
 	lda     _Scroll_Adjusted_X
 	lsr     a
@@ -2218,14 +2477,34 @@ L0698:	sta     _collision
 	lda     _Y_speed
 	sec
 	sbc     #$01
-	bvc     L057D
+	bvc     L060D
 	eor     #$80
-L057D:	bpl     L0699
-	lda     #$0F
-	jmp     L0580
-L0699:	lda     #$10
-L0580:	clc
+L060D:	bpl     L073A
+	lda     #$1F
+	jmp     L0610
+L073A:	lda     #$20
+L0610:	clc
 	adc     _Y1
+	and     #$F0
+	clc
+	adc     ptr1
+	sta     _collision_Index
+;
+; Collision_Down();
+;
+	jsr     _Collision_Down
+;
+; collision_Index = (((char)Scroll_Adjusted_X >> 4) + ((Y1 + 16) & 0xf0)); //top left if on ground / falling, bottom left if in air
+;
+	lda     _Scroll_Adjusted_X
+	lsr     a
+	lsr     a
+	lsr     a
+	lsr     a
+	sta     ptr1
+	lda     _Y1
+	clc
+	adc     #$10
 	and     #$F0
 	clc
 	adc     ptr1
@@ -2257,9 +2536,9 @@ L0580:	clc
 ;
 	lda     _collision
 	cmp     #$05
-	bcs     L069D
+	bcs     L073E
 	lda     _collision
-	beq     L069D
+	beq     L073E
 ;
 ; Horiz_scroll = Horiz_scroll_Old;
 ;
@@ -2273,48 +2552,48 @@ L0580:	clc
 ;
 ; else
 ;
-	jmp     L069F
+	jmp     L0740
 ;
 ; if (X_speed >= 0)
 ;
-L069D:	ldx     _X_speed
-	bmi     L0593
+L073E:	ldx     _X_speed
+	bmi     L062B
 ;
 ; if (Horiz_scroll_Old > Horiz_scroll) // if pass 0, switch nametables
 ;
 	lda     _Horiz_scroll_Old
 	sec
 	sbc     _Horiz_scroll
-	bcc     L069E
-	beq     L069E
+	bcc     L073F
+	beq     L073F
 ;
 ; else
 ;
-	jmp     L06A7
+	jmp     L0749
 ;
 ; if (Horiz_scroll_Old < Horiz_scroll)
 ;
-L0593:	lda     _Horiz_scroll_Old
+L062B:	lda     _Horiz_scroll_Old
 	cmp     _Horiz_scroll
-	bcs     L069E
+	bcs     L073F
 ;
 ; ++Nametable; // if pass 0, switch nametables
 ;
-L06A7:	inc     _Nametable
+L0749:	inc     _Nametable
 ;
 ; Nametable &= 1; // keep it 1 or 0
 ;
-L069E:	lda     _Nametable
+L073F:	lda     _Nametable
 	and     #$01
 	sta     _Nametable
 ;
 ; Y1 += (Y_speed >> 4); // use the high nibble
 ;
-L0592:	ldx     #$00
-L069F:	lda     _Y_speed
-	bpl     L05A2
+L062A:	ldx     #$00
+L0740:	lda     _Y_speed
+	bpl     L063A
 	dex
-L05A2:	jsr     asrax4
+L063A:	jsr     asrax4
 	clc
 	adc     _Y1
 	sta     _Y1
@@ -2324,7 +2603,7 @@ L05A2:	jsr     asrax4
 	lda     _walk_count
 	cmp     #$20
 	ldx     #$00
-	bcc     L06A0
+	bcc     L0741
 ;
 ; walk_count = 0;
 ;
@@ -2332,7 +2611,7 @@ L05A2:	jsr     asrax4
 ;
 ; state = Walk_Moves[(walk_count >> 3)]; // if not jumping
 ;
-L06A0:	lda     _walk_count
+L0741:	lda     _walk_count
 	lsr     a
 	lsr     a
 	lsr     a
@@ -2349,7 +2628,7 @@ L06A0:	lda     _walk_count
 ;
 	lda     _Y_speed
 	asl     a
-	bcc     L05AB
+	bcc     L0643
 ;
 ; state = 3;
 ;
@@ -2358,7 +2637,7 @@ L06A0:	lda     _walk_count
 ;
 ; }
 ;
-L05AB:	rts
+L0643:	rts
 
 .endproc
 
@@ -2472,9 +2751,9 @@ L05AB:	rts
 ;
 	lda     #$00
 	sta     _index
-L06A8:	lda     _index
+L074A:	lda     _index
 	cmp     #$07
-	bcs     L06A9
+	bcs     L074B
 ;
 ; PPU_DATA = HUD[index];
 ;
@@ -2485,11 +2764,11 @@ L06A8:	lda     _index
 ; for (index = 0; index < sizeof(HUD); ++index)
 ;
 	inc     _index
-	jmp     L06A8
+	jmp     L074A
 ;
 ; PPU_ADDRESS = 0x24;
 ;
-L06A9:	lda     #$24
+L074B:	lda     #$24
 	sta     $2006
 ;
 ; PPU_ADDRESS = 0x74;
@@ -2501,9 +2780,9 @@ L06A9:	lda     #$24
 ;
 	lda     #$00
 	sta     _index
-L06AA:	lda     _index
+L074C:	lda     _index
 	cmp     #$07
-	bcs     L06AB
+	bcs     L074D
 ;
 ; PPU_DATA = HUD2[index];
 ;
@@ -2514,11 +2793,11 @@ L06AA:	lda     _index
 ; for (index = 0; index < sizeof(HUD); ++index)
 ;
 	inc     _index
-	jmp     L06AA
+	jmp     L074C
 ;
 ; PPU_ADDRESS = 0x27;
 ;
-L06AB:	lda     #$27
+L074D:	lda     #$27
 	sta     $2006
 ;
 ; PPU_ADDRESS = 0xc0;
@@ -2530,9 +2809,9 @@ L06AB:	lda     #$27
 ;
 	lda     #$00
 	sta     _index
-L06AC:	lda     _index
+L074E:	lda     _index
 	cmp     #$08
-	bcs     L0641
+	bcs     L06D9
 ;
 ; PPU_DATA = 0xff;
 ;
@@ -2542,11 +2821,11 @@ L06AC:	lda     _index
 ; for (index = 0; index < 8; ++index)
 ;
 	inc     _index
-	jmp     L06AC
+	jmp     L074E
 ;
 ; }
 ;
-L0641:	rts
+L06D9:	rts
 
 .endproc
 
@@ -2598,7 +2877,11 @@ L0641:	rts
 ;
 ; Reset_Scroll();
 ;
-	jmp     _Reset_Scroll
+	jsr     _Reset_Scroll
+;
+; Wait_Vblank();
+;
+	jmp     _Wait_Vblank
 
 .endproc
 
@@ -2656,7 +2939,7 @@ L0641:	rts
 ;
 	lda     _joypad1
 	and     #$80
-	beq     L03BC
+	beq     L03E0
 ;
 ; *((unsigned char*)0x4000) = 0x0f;
 ;
@@ -2670,24 +2953,138 @@ L0641:	rts
 ;
 ; }
 ;
-L03BC:	rts
+L03E0:	rts
 
 .endproc
 
 ; ---------------------------------------------------------------
-; void __near__ playScale (void)
+; void __near__ playSquare (unsigned char, unsigned char)
 ; ---------------------------------------------------------------
 
 .segment	"CODE"
 
-.proc	_playScale: near
+.proc	_playSquare: near
 
 .segment	"CODE"
 
 ;
+; {
+;
+	jsr     pusha
+;
+; voice *= 4;
+;
+	ldy     #$00
+	lda     (sp),y
+	asl     a
+	asl     a
+	sta     (sp),y
+;
+; *((unsigned char*)(0x4000 + voice)) = 0x8f;
+;
+	sta     ptr1
+	tya
+	clc
+	adc     #$40
+	sta     ptr1+1
+	lda     #$8F
+	sta     (ptr1),y
+;
+; *((unsigned char*)(0x4001 + voice)) = 0x00;
+;
+	lda     (sp),y
+	clc
+	adc     #$01
+	sta     ptr1
+	tya
+	adc     #$40
+	sta     ptr1+1
+	tya
+	sta     (ptr1),y
+;
+; *((unsigned char*)(0x4002 + voice)) = notes[note];
+;
+	lda     (sp),y
+	clc
+	adc     #$02
+	pha
+	tya
+	adc     #$40
+	tax
+	pla
+	jsr     pushax
+	ldy     #$03
+	lda     (sp),y
+	tay
+	lda     _notes,y
+	ldy     #$00
+	jsr     staspidx
+;
+; if(note < 5)   *((unsigned char*)(0x4003 + voice)) = 0x13;
+;
+	ldy     #$01
+	lda     (sp),y
+	cmp     #$05
+	bcs     L0751
+	dey
+	lda     (sp),y
+	clc
+	adc     #$03
+	sta     ptr1
+	tya
+	adc     #$40
+	sta     ptr1+1
+	lda     #$13
+;
+; else if(note < 12)  *((unsigned char*)(0x4003 + voice)) = 0x12;
+;
+	jmp     L074F
+L0751:	lda     (sp),y
+	cmp     #$0C
+	bcs     L0753
+	dey
+	lda     (sp),y
+	clc
+	adc     #$03
+	sta     ptr1
+	tya
+	adc     #$40
+	sta     ptr1+1
+	lda     #$12
+;
+; else if(note < 24)  *((unsigned char*)(0x4003 + voice)) = 0x11;
+;
+	jmp     L074F
+L0753:	lda     (sp),y
+	cmp     #$18
+	bcs     L0409
+	dey
+	lda     (sp),y
+	clc
+	adc     #$03
+	sta     ptr1
+	tya
+	adc     #$40
+	sta     ptr1+1
+	lda     #$11
+;
+; else     *((unsigned char*)(0x4003 + voice)) = 0x10;
+;
+	jmp     L074F
+L0409:	dey
+	lda     (sp),y
+	clc
+	adc     #$03
+	sta     ptr1
+	tya
+	adc     #$40
+	sta     ptr1+1
+	lda     #$10
+L074F:	sta     (ptr1),y
+;
 ; }
 ;
-	rts
+	jmp     incsp2
 
 .endproc
 
@@ -2737,12 +3134,12 @@ L03BC:	rts
 ;
 ; while (Game_Mode == TITLE_MODE)
 ;
-	jmp     L03D7
+	jmp     L075A
 ;
 ; while (NMI_flag == 0)
 ;
-L06AE:	lda     _NMI_flag
-	beq     L06AE
+L0754:	lda     _NMI_flag
+	beq     L0754
 ;
 ; Rotate_Palette();
 ;
@@ -2760,10 +3157,10 @@ L06AE:	lda     _NMI_flag
 ;
 	lda     _joypad1old
 	and     #$10
-	bne     L06B6
+	bne     L075E
 	lda     _joypad1
 	and     #$10
-	beq     L06B7
+	beq     L075F
 ;
 ; NMI_flag = 0;
 ;
@@ -2772,8 +3169,8 @@ L06AE:	lda     _NMI_flag
 ;
 ; while (NMI_flag == 0)
 ;
-L06B1:	lda     _NMI_flag
-	beq     L06B1
+L0757:	lda     _NMI_flag
+	beq     L0757
 ;
 ; All_Off();
 ;
@@ -2817,22 +3214,22 @@ L06B1:	lda     _NMI_flag
 ;
 ; NMI_flag = 0;
 ;
-L06B6:	lda     #$00
-L06B7:	sta     _NMI_flag
+L075E:	lda     #$00
+L075F:	sta     _NMI_flag
 ;
 ; while (Game_Mode == TITLE_MODE)
 ;
-L03D7:	lda     _Game_Mode
-	beq     L06AE
+L075A:	lda     _Game_Mode
+	beq     L0754
 ;
 ; while (Game_Mode == RUN_GAME_MODE)
 ;
-	jmp     L06B4
+	jmp     L075C
 ;
 ; while (NMI_flag == 0)
 ;
-L06B3:	lda     _NMI_flag
-	beq     L06B3
+L075B:	lda     _NMI_flag
+	beq     L075B
 ;
 ; Get_Input();
 ;
@@ -2857,27 +3254,31 @@ L06B3:	lda     _NMI_flag
 ;
 ; while (Game_Mode == RUN_GAME_MODE)
 ;
-L06B4:	lda     _Game_Mode
+L075C:	lda     _Game_Mode
 	cmp     #$01
-	beq     L06B3
+	beq     L075B
 ;
-; if (Game_Mode == GAME_OVER_MODE) {
+; while (1)
 ;
-	cmp     #$03
-	bne     L03D7
+	jmp     L075A
 ;
 ; while (NMI_flag == 0);
 ;
-L06B5:	lda     _NMI_flag
-	beq     L06B5
+L075D:	lda     _NMI_flag
+	beq     L075D
 ;
 ; Get_Input();
 ;
 	jsr     _Get_Input
 ;
-; while (1)
+; NMI_flag = 0;
 ;
-	jmp     L06B6
+	lda     #$00
+	sta     _NMI_flag
+;
+; }
+;
+	rts
 
 .endproc
 
