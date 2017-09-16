@@ -14,6 +14,7 @@ uchar isSneezing = 0;
 //bool isSneezing = 0;
 
 uchar melodyOneTone = 0x80;
+uchar melodyTwoTone = 0xC0;
 uchar bassLen = 0xF8;
 
 enum {
@@ -185,31 +186,31 @@ uchar titleMelodyA[][2] = {
 uchar titleMelodyAPos = 0;
 //melody cont
 uchar titleMelodyB[][2] = {
-	{A3, 0},
+	{A3, 1},
 	{C4, 2},
-	{F4, 4},
-	{A3, 6},
-	{C4, 8},
-	{F4, 10},
-	{B4, 12},
-	{G4, 14},
-	{A4, 8},
-	{Gb4, 10},
-	{F4, 12},
-	{Gb4, 14}
+	{F4, 3},
+	{A3, 5},
+	{C4, 6},
+	{F4, 7},
+	{B4, 8},
+	{G4, 11},
+	{A4, 12},
+	{Gb4, 13},
+	{F4, 14},
+	{Gb4, 15}
 };
 uchar titleMelodyBPos = 0;
 //melody end
 uchar titleMelodyC[][2] = {
-	{A3, 0},
+	{A3, 1},
 	{C4, 2},
-	{F4, 4},
-	{A3, 6},
-	{C4, 8},
-	{F4, 10},
-	{B4, 12},
-	{G4, 14},
-	{A4, 8}
+	{F4, 3},
+	{A3, 5},
+	{C4, 6},
+	{F4, 7},
+	{B4, 8},
+	{G4, 11},
+	{A4, 12}
 };
 uchar titleMelodyCPos = 0;
 
