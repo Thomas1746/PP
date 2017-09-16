@@ -11,7 +11,7 @@ void main(void)
 {
 	All_Off();
 	Draw_Title();
-
+	player_lives = 3;
 	joypad1 = 0xff; // fix a bug, reset is wiping joypad1old
 	Load_Palette();
 	Reset_Scroll();
@@ -137,6 +137,7 @@ void Collision_Down(void)
 		collision += PLATFORM[temp];
 	}
 }
+
 void move_logic(void)
 {
 	if ((joypad1 & (RIGHT | LEFT)) == 0)
@@ -233,11 +234,14 @@ void move_logic(void)
 	Collision_Down();												  // if on platform, ++collision
 	if (collision >= 50)
 	{
+		--player_lives;
 		Y1 = 0x70;
 		Horiz_scroll = 0x80;
 		NametableB = Nametable;
-		//Draw_Game_Over();
-		//Game_Mode = GAME_OVER_MODE;
+		if(player_lives == 0) {
+			Draw_Game_Over();
+			Game_Mode = GAME_OVER_MODE;
+		}
 		return;
 	} // if on platform, ++collision
 	if (Y_speed >= 0)
