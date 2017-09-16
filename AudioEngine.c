@@ -30,11 +30,11 @@ void audioReset()
 void audioUpdate()
 {
 	++currentTick;
-	if(audioState == SONG_BOSSA)
+	if(Game_Mode == RUN_GAME_MODE)
 	{
 		bossaSong();
 	}
-	if(audioState == SONG_COUNTRY)
+	else
 	{
 		titleAudio();
 	}
@@ -56,7 +56,9 @@ void playSquare(uchar note, uchar voice)
 	if(note >= NOTE_CHOICE_MAX) return;
 	voice *= 4;
 	//volume, cycle, loop, and duty
-	*((unsigned char*)(0x4000 + voice)) = 0x0f | melodyOneTone;
+	if(voice == 0) *((unsigned char*)(0x4000 + voice)) = 0x0f | melodyOneTone;
+	else *((unsigned char*)(0x4000 + voice)) = 0x0f | melodyTwoTone;
+	
 	*((unsigned char*)(0x4001 + voice)) = 0x00;
 	*((unsigned char*)(0x4002 + voice)) = notes[note];
 	if(note < 5) 		*((unsigned char*)(0x4003 + voice)) = 0x13;
@@ -93,10 +95,61 @@ void playSpikes()
 
 void titleAudio()
 {
-	if(currentTick == 24) 
+	if(currentTick == 15) 
 	{
 		currentTick = 0;
-		sneezeSound();
+		
+		if(currentSemiQ == titleBassA[titleBassAPos][1]){
+			playTri(titleBassA[titleBassAPos][0]);
+			++titleBassAPos;
+		}
+		if(currentSemiQ == titleChordA[titleChordAPos][1]){
+			playSquare(titleChordA[titleChordAPos][0], SQUARE_TWO);
+			++titleChordAPos;
+		}
+		
+		switch(currentBar)
+		{
+			case 0:
+			melodyOneTone = 0x80;
+			bassLen = 0xA8;
+			if(currentSemiQ == titleMelodyA[titleMelodyAPos][1]){
+				playSquare(titleMelodyA[titleMelodyAPos][0], SQUARE_ONE);
+				++titleMelodyAPos;
+			}
+			break;
+			case 1:
+			if(currentSemiQ == titleMelodyB[titleMelodyBPos][1]){
+				playSquare(titleMelodyB[titleMelodyBPos][0], SQUARE_ONE);
+				++titleMelodyBPos;
+			}
+			break;
+			case 2:
+			if(currentSemiQ == titleMelodyA[titleMelodyAPos][1]){
+				playSquare(titleMelodyA[titleMelodyAPos][0], SQUARE_ONE);
+				++titleMelodyAPos;
+			}
+			break;
+			case 3:
+			if(currentSemiQ == titleMelodyC[titleMelodyCPos][1]){
+				playSquare(titleMelodyC[titleMelodyCPos][0], SQUARE_ONE);
+				++titleMelodyCPos;
+			}
+			break;
+		}
+		if(titleBassAPos >= 8) titleBassAPos = 0;
+		if(titleChordAPos >= 3) titleChordAPos = 0;
+		if(titleMelodyAPos >= 7) titleMelodyAPos = 0;
+		if(titleMelodyBPos >= 12) titleMelodyBPos = 0;
+		if(titleMelodyCPos >= 9) titleMelodyCPos = 0;
+		
+		++currentSemiQ;
+		if(currentSemiQ == 16)
+		{
+			currentSemiQ = 0;
+			++currentBar;
+			if(currentBar == 4) currentBar = 0;
+		}
 	}
 }
 
