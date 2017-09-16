@@ -406,13 +406,9 @@ void move_logic(void)
 	// Jump - we already figured if we are on a platform, only jump if on a platform
 	if (collision > 0)
 	{
-		if (((joypad1 & A_BUTTON) != 0) && ((joypad1old & A_BUTTON) == 0))
+		if (isSneezing)
 		{
 			Y_speed = -0x68; // 0xc8
-			if (collision > 0)
-			{
-				audioBeep();
-			}
 		}
 	}
 
