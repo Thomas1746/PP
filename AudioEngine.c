@@ -21,7 +21,14 @@ void audioBeep()
 	}
 }
 
-void playScale()
+void playSquare(uchar note, uchar voice)
 {
-	;
+	voice *= 4;
+	*((unsigned char*)(0x4000 + voice)) = 0x8f;
+	*((unsigned char*)(0x4001 + voice)) = 0x00;
+	*((unsigned char*)(0x4002 + voice)) = notes[note];
+	if(note < 5) 		*((unsigned char*)(0x4003 + voice)) = 0x13;
+	else if(note < 12) 	*((unsigned char*)(0x4003 + voice)) = 0x12;
+	else if(note < 24) 	*((unsigned char*)(0x4003 + voice)) = 0x11;
+	else 				*((unsigned char*)(0x4003 + voice)) = 0x10;
 }

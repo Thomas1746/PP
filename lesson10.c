@@ -266,7 +266,14 @@ void move_logic(void)
 			Y_speed = -0x48; // 0xc8
 			if(collision > 0)
 			{
-				audioBeep();
+				playSquare(currentNote, SQUARE_ONE);
+				playSquare(currentNote + 4, SQUARE_TWO);
+				++currentNote;
+				if(currentNote == NOTE_CHOICE_MAX)
+				{
+					currentNote -= NOTE_CHOICE_MAX;
+				}
+				//audioBeep();
 			}
 		}
 	}
