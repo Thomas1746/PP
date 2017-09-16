@@ -5,6 +5,7 @@
  */
 
 #include "DEFINE.c"
+#include "AudioEngine.c"
 
 void main(void)
 {
@@ -14,6 +15,8 @@ void main(void)
 	joypad1 = 0xff; // fix a bug, reset is wiping joypad1old
 	Load_Palette();
 	Reset_Scroll();
+
+	setupAudio();
 
 	Wait_Vblank();
 	All_On();
@@ -58,6 +61,7 @@ void main(void)
 			//every_frame();	// moved this to the nmi code in reset.s for greater stability
 			Get_Input();
 			move_logic();
+			audioUpdate();
 			update_Sprites();
 
 			NMI_flag = 0;
@@ -244,6 +248,10 @@ void move_logic(void)
 		if (((joypad1 & A_BUTTON) != 0) && ((joypad1old & A_BUTTON) == 0))
 		{
 			Y_speed = -0x48; // 0xc8
+			if(collision > 0)
+			{
+				audioBeep();
+			}
 		}
 	}
 
