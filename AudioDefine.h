@@ -13,6 +13,9 @@ uchar currentSemiQ = 0;
 uchar isSneezing = 0;
 //bool isSneezing = 0;
 
+uchar melodyOneTone = 0x80;
+uchar bassLen = 0x10;
+
 enum {
 	Ab2, A2, Bb2, B2, C3, Db3, D3, Eb3, E3, F3,
 	Gb3, G3, Ab3, A3, Bb3, B3, C4, Db4, D4, Eb4, 
@@ -39,17 +42,30 @@ uchar notes[] = {
 };
 
 uchar bossaBassA[][2] = {
-	{C3, 0}, {G4, 3}, {G4, 4}, {C3, 7},
-	{C3, 8}, {G4, 11}, {G4, 12}, {C3, 14},
-	{Bb3, 0}, {F3, 3}, {F3, 4}, {Bb3, 7},
-	{A3, 8}, {F3, 12}
+	{C3, 0}, {E3, 3}, {G3, 4}, {E3, 6},
+	{C3, 8}, {E3, 11}, {G3, 12}, {E3, 14}
 };
 uchar bossaBassB[][2] = {
 	{Bb3, 0}, {F3, 3}, {F3, 4}, {Bb3, 7},
 	{A3, 8}, {F3, 12}, {NOTE_CHOICE_MAX, 14}, {NOTE_CHOICE_MAX, 15}
 };
 uchar bossaBassPos = 0;
-
+//bridge start
+uchar bossaBassC[][2] = {
+	{A3, 0}, {C4, 3}, {E4, 4}, {B3, 6},
+	{G3, 8}, {B3, 11}, {D4, 12}, {G3, 14}
+};
+//bridge alt
+uchar bossaBassD[][2] = {
+	{A3, 0}, {C4, 3}, {E4, 4}, {A3, 6},
+	{G3, 8}, {B3, 11}, {D4, 12}, {G3, 14}
+};
+//bridge alt 2
+uchar bossaBassE[][2] = {
+	{A3, 0}, {C4, 3}, {E4, 4}, {A3, 6},
+	{G3, 8}, {B3, 10}, {D4, 11}, {NOTE_CHOICE_MAX, 15}
+};
+//A section start
 uchar bossaMelodyA[][2] = {
 	{E4, 0},
 	{B4, 6},
@@ -88,6 +104,40 @@ uchar bossaMelodyD[][2] = {
 	{E4, 8}
 };
 uchar bossaMelodyDPos = 0;
+
+//bridge start
+uchar bossaMelodyE[][2] = {
+	{A4, 0},
+	{C5, 4},
+	{G4, 5},
+	{B4, 6},
+	{C5, 10},
+	{A4, 11},
+	{B4, 12},
+	{C5, 13},
+	{D5, 14}
+};
+uchar bossaMelodyEPos = 0;
+//bridge 2
+uchar bossaMelodyF[][2] = {
+	{E5, 0},
+	{C5, 3},
+	{A4, 4},
+	{E5, 6},
+	{D5, 8},
+	{B4, 10},
+	{G4, 11}
+};
+uchar bossaMelodyFPos = 0;
+//bridge end
+uchar bossaMelodyG[][2] = {
+	{E5, 0},
+	{C5, 3},
+	{A4, 4},
+	{E5, 6},
+	{D5, 8}
+};
+uchar bossaMelodyGPos = 0;
 
 
 void setupAudio(void);
