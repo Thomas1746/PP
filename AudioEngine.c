@@ -11,6 +11,21 @@ void setupAudio()
 	*((unsigned char*)0x4015) = 0x0f;
 }
 
+void audioReset()
+{
+	currentTick = 0;
+	currentBar = 0;
+	currentSemiQ = 0;
+	
+	bossaBassPos = 0;
+	bossaMelodyAPos = 0;
+	bossaMelodyCPos = 0;
+	bossaMelodyDPos = 0;
+	bossaMelodyEPos = 0;
+	bossaMelodyFPos = 0;
+	bossaMelodyGPos = 0;
+}
+
 void audioUpdate()
 {
 	++currentTick;
@@ -18,27 +33,6 @@ void audioUpdate()
 	{
 		//songTest();
 		bossaSong();
-	}
-}
-
-void songTest()
-{
-	if(currentTick >= 15)
-	{
-		currentTick = 0;
-		++bassNote;
-		playSquare(bassLine[bassNote], SQUARE_ONE);
-		
-		if(bassNote > 3) 
-		{
-			bassNote = 0;
-		}
-		if(bassNote == 1)
-		{
-			sneezeSound();
-			//isSneezing = 1;
-		} 
-		//else isSneezing = false;
 	}
 }
 
@@ -78,18 +72,24 @@ void playTri(uchar note)
 	else 				*((unsigned char*)0x400b) = 0x00 | bassLen;
 }
 
-void playNoise(uchar note)
-{
-	*((uchar*)0x400c) = 0x0f;
-	*((uchar*)0x400e) = note | 0x40;
-	*((uchar*)0x400f) = 0xF8;
-}
-
 void sneezeSound()
 {
 	*((uchar*)0x400c) = 0x0f;
 	*((uchar*)0x400e) = 13 | 0x40;
 	*((uchar*)0x400f) = 0xF0;
+}
+
+void playSpikes()
+{
+	*((unsigned char*)0x4004) = 0x4f;
+	*((unsigned char*)0x4005) = 0xC3;
+	*((unsigned char*)0x4006) = 0x20;
+	*((unsigned char*)0x4007) = 0x09;
+}
+
+void titleAudio()
+{
+	
 }
 
 void bossaSong()
@@ -105,6 +105,7 @@ void bossaSong()
 			case 4:
 			case 12:
 			melodyOneTone = 0x80;
+			bassLen = 0xA8;
 			if(currentSemiQ == bossaBassA[bossaBassPos][1]){
 				playTri(bossaBassA[bossaBassPos][0]);
 				++bossaBassPos;
@@ -161,6 +162,7 @@ void bossaSong()
 			case 8:
 			case 10:
 			melodyOneTone = 0x40;
+			bassLen = 0xE8;
 			if(currentSemiQ == bossaBassC[bossaBassPos][1]){
 				playTri(bossaBassC[bossaBassPos][0]);
 				++bossaBassPos;
@@ -231,3 +233,4 @@ void bossaSong()
 		}
 	}
 }
+

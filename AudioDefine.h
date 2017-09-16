@@ -14,7 +14,7 @@ uchar isSneezing = 0;
 //bool isSneezing = 0;
 
 uchar melodyOneTone = 0x80;
-uchar bassLen = 0x10;
+uchar bassLen = 0xF8;
 
 enum {
 	Ab2, A2, Bb2, B2, C3, Db3, D3, Eb3, E3, F3,
@@ -40,6 +40,17 @@ uchar notes[] = {
 	0x36, 0x24, 0x14, 0x05, 0xF6, 0xE8, 0xDB, 0xCF, 0xC3, 0xB8, 
 	0xAF, 0xA4, 0x9B, 0x92, 0x8B
 };
+
+void setupAudio(void);
+void audioUpdate(void);
+void audioReset(void);
+void audioBeep(void);
+void playSquare(uchar /*note*/, uchar /*voice*/);
+void playTri(uchar /*note*/);
+void sneezeSound(void);
+void bossaSong(void);
+
+/////////////////Bossa/////////////////
 
 uchar bossaBassA[][2] = {
 	{C3, 0}, {E3, 3}, {G3, 4}, {E3, 6},
@@ -139,15 +150,66 @@ uchar bossaMelodyG[][2] = {
 };
 uchar bossaMelodyGPos = 0;
 
+/////////////////Title music/////////////////
 
-void setupAudio(void);
-void audioUpdate(void);
-void audioBeep(void);
-void playSquare(uchar /*note*/, uchar /*voice*/);
-void playTri(uchar /*note*/);
-void playNoise(uchar /*note*/);
-void sneezeSound(void);
-void bossaSong(void);
-void songTest(void);
+//bass
+uchar titleBassA[][2] = {
+	{D3, 0},
+	{A3, 2},
+	{D3, 4},
+	{A3, 6},
+	{B3, 8},
+	{G3, 10},
+	{A3, 12},
+	{G3, 14},
+};
+uchar titleBassAPos = 0;
+//chords
+uchar titleChordA[][2] = {
+	{D5, 0},
+	{B4, 8},
+	{A4, 12}
+};
+uchar titleChordAPos = 0;
+//melody
+uchar titleMelodyA[][2] = {
+	{D4, 0},
+	{A3, 5},
+	{C4, 6},
+	{F4, 7},
+	{B4, 8},
+	{G4, 11},
+	{A4, 12}
+};
+uchar titleMelodyAPos = 0;
+//melody cont
+uchar titleMelodyB[][2] = {
+	{A3, 0},
+	{C4, 2},
+	{F4, 4},
+	{A3, 6},
+	{C4, 8},
+	{F4, 10},
+	{B4, 12},
+	{G4, 14},
+	{A4, 8},
+	{Gb4, 10},
+	{F4, 12},
+	{Gb4, 14}
+};
+uchar titleMelodyBPos = 0;
+//melody end
+uchar titleMelodyC[][2] = {
+	{A3, 0},
+	{C4, 2},
+	{F4, 4},
+	{A3, 6},
+	{C4, 8},
+	{F4, 10},
+	{B4, 12},
+	{G4, 14},
+	{A4, 8}
+};
+uchar titleMelodyCPos = 0;
 
 #endif

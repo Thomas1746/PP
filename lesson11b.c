@@ -50,6 +50,7 @@ void title_loop()
 		while (NMI_flag == 0)
 			; // wait till v-blank
 		Game_Mode = RUN_GAME_MODE;
+		audioReset();
 		// init game mode
 		All_Off();		 // turn off screen
 		PPU_CTRL = 0x90; // rightward increments to PPU
@@ -138,6 +139,7 @@ void death_loop()
 		while (NMI_flag == 0)
 			; // wait till v-blank
 		Game_Mode = TITLE_MODE;
+		audioReset();
 		// init game mode
 		All_Off(); // turn off screen
 		Draw_Title();

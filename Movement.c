@@ -103,12 +103,13 @@ void move_logic(void)
 		Y1 = 0x70;
 		Horiz_scroll = 0x80;
 		NametableB = Nametable;
+		playSpikes();
 		--lives;
 		if (lives == 0) {
 			NMI_flag = 0;
 			while (NMI_flag == 0); // wait till v-blank
 			Game_Mode = GAME_OVER_MODE;
-			
+			audioReset();
 
 			All_Off(); // turn off screen
 			Draw_Death();
