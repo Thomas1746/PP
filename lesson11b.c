@@ -63,8 +63,9 @@ void title_loop()
 		
 		RoomPlus = 0;
 		Room = 0;
-		RoomB = 1;
+		RoomB = 0;
 		Nametable = 0;
+		Horiz_scroll = Horiz_scroll_Old = Horiz_scroll_Plus = 0;
 		Reset_Scroll();
 
 		// was All_On(); changed to...
