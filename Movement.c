@@ -102,6 +102,8 @@ void move_logic(void)
 	{
 		playSpikes();
 		--lives;
+		Y_speed = 0;
+		Y1 = 0;
 		if (lives == 0)
 		{
 			NMI_flag = 0;
@@ -130,11 +132,12 @@ void move_logic(void)
 			All_Off();		 // turn off screen
 			PPU_CTRL = 0x90; // rightward increments to PPU
 			Load_HUD();
-			
+			RoomPlus = 0;
+			Room = 0;
+			RoomB = 1;
+			Nametable = 0;
 			Set_Sprite_Zero();
 			Draw_Background();
-			Room = 0;
-			Nametable = 0;
 			X1 = 0x80; // starting position
 			Y1 = 0x70; // middle of screen
 			Reset_Scroll();
