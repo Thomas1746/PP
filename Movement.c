@@ -256,7 +256,7 @@ void move_logic(void)
 	}
 
 	Nametable &= 1; // keep it 1 or 0
-	Room %= NUM_LEVELS - 1;		// keep it 0-3
+	Room %= NUM_LEVELS;		// keep it 0-3
 
 	if (Y_speed >= 0)
 	{						  // positive = falling
