@@ -100,9 +100,6 @@ void move_logic(void)
 	Collision_Down();												  // if on platform, ++collision
 	if (collision >= 50)
 	{
-		Y1 = 0x70;
-		Horiz_scroll = 0x80;
-		NametableB = Nametable;
 		playSpikes();
 		--lives;
 		if (lives == 0)
@@ -125,6 +122,26 @@ void move_logic(void)
 			setupAudio();
 			Wait_Vblank();
 			All_On(); // turn on screen
+		} else {
+			NMI_flag = 0;
+			while (NMI_flag == 0)
+				; // wait till v-blank
+			audioReset();
+			// init game mode
+			All_Off();		 // turn off screen
+			PPU_CTRL = 0x90; // rightward increments to PPU
+			Load_HUD();
+			
+			Set_Sprite_Zero();
+			Draw_Background();
+			X1 = 0x80; // starting position
+			Y1 = 0x70; // middle of screen
+			Reset_Scroll();
+	
+			// was All_On(); changed to...
+			PPU_CTRL = 0x91;
+			Room = 0;
+			Nametable = 0;
 		}
 		return;
 	} // if on platform, ++collision

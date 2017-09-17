@@ -106,12 +106,10 @@ unsigned char BUFFER7[8];	// final attribute table buffer
 #include "Levels/L2.csv"
 #include "Levels/L3.csv"
 #include "Levels/L4.csv"
-#include "Levels/L5.csv"
-#include "Levels/L6.csv"
 #include "BG/Title.h"
 #include "BG/death.h"
 
-const unsigned char * const ROOMS[]={L1, L2, L3, L4, L5, L6};
+const unsigned char * const ROOMS[]={L1, L2, L3, L4};
 
 // collision maps called A1-A4
 // now their value is 0-11, which will index to this array...
@@ -186,6 +184,10 @@ const unsigned char MT_color[]={
 	0, 0, 0, 0, 0, 0, 0, 0,
 	0, 0, 0, 0, 0, 0, 0, 0,
 	1, 2, 3, 3, 3, 3, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0,
 	0, 0, 0, 0, 0, 0, 0, 0};
 	
 const unsigned char HUD[]={" Lives:  "}; // add tile 3 after this
