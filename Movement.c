@@ -124,7 +124,9 @@ void move_logic(void)
 			setupAudio();
 			Wait_Vblank();
 			All_On(); // turn on screen
-		} else {
+		}
+		else
+		{
 			NMI_flag = 0;
 			while (NMI_flag == 0)
 				; // wait till v-blank
@@ -142,7 +144,7 @@ void move_logic(void)
 			X1 = 0x80; // starting position
 			Y1 = 0x70; // middle of screen
 			Reset_Scroll();
-	
+
 			// was All_On(); changed to...
 			PPU_CTRL = 0x91;
 		}
@@ -173,14 +175,28 @@ void move_logic(void)
 			Y1 += 2;
 		}
 	}
-
+	if (collisionBot > 0 && isSneezing) {
+		Y_speed = -0x68; // 0xc8
+	}
 	// Jump - we already figured if we are on a platform, only jump if on a platform
-	if (collisionBot > 0)
+	if (collisionBot > 0 && isSneezing != achooDrawn)
 	{
+		achooDrawn = isSneezing;
+		NMI_flag = 0;
+		while (NMI_flag == 0);			 // wait till v-blank
+		All_Off();		 // turn off screen
+		PPU_CTRL = 0x90; // rightward increments to PPU
 		if (isSneezing)
 		{
-			Y_speed = -0x68; // 0xc8
+			drawAchoo();
 		}
+		else
+		{
+			clearAchoo();
+		}
+
+		// was All_On(); changed to...
+		PPU_CTRL = 0x91;
 	}
 
 	// max speeds
@@ -256,8 +272,8 @@ void move_logic(void)
 		}
 	}
 
-	Nametable &= 1; // keep it 1 or 0
-	Room %= NUM_LEVELS;		// keep it 0-3
+	Nametable &= 1;		// keep it 1 or 0
+	Room %= NUM_LEVELS; // keep it 0-3
 
 	if (Y_speed >= 0)
 	{						  // positive = falling

@@ -181,6 +181,22 @@ void Load_HUD(void)
 		PPU_DATA = HUD[index] + 32;
 	}
 }
+void drawAchoo() {
+	PPU_ADDRESS = 0x20;
+	PPU_ADDRESS = 0x38;
+	for (index = 0; index < sizeof(ACHOO); ++index)
+	{
+		PPU_DATA = ACHOO[index] + 32;
+	}
+}
+void clearAchoo() {
+	PPU_ADDRESS = 0x20;
+	PPU_ADDRESS = 0x38;
+	for (index = 0; index < sizeof(ACHOO); ++index)
+	{
+		PPU_DATA = 0;
+	}
+}
 
 /*	I split these up, so that we don't have too many
  *	things happening at the same time and run into the
