@@ -23,7 +23,7 @@
 #define B_BUTTON	0x40
 #define A_BUTTON	0x80
 
-#define NUM_LEVELS	10
+#define NUM_LEVELS	13
 
 
 enum {TITLE_MODE, RUN_GAME_MODE, PAUSE_MODE, GAME_OVER_MODE, VICTORY_MODE, BOSS_MODE};
@@ -115,10 +115,13 @@ unsigned char BUFFER7[8];	// final attribute table buffer
 #include "Levels/L8.csv"
 #include "Levels/L9.csv"
 #include "Levels/L10.csv"
+#include "Levels/L11.csv"
+#include "Levels/L12.csv"
+#include "Levels/L13.csv"
 #include "BG/Title.h"
 #include "BG/death.h"
 
-const unsigned char * const ROOMS[]={L1, L2, L3, L4, L5, L6, L7, L8, L9, L10};
+const unsigned char * const ROOMS[]={L1, L2, L3, L4, L5, L8, L9, L10, L6, L7, L11, L12, L13};
 
 // collision maps called A1-A4
 // now their value is 0-11, which will index to this array...
