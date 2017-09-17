@@ -193,6 +193,7 @@ const unsigned char MT_color[]={
 	0, 0, 0, 0, 0, 0, 0, 0};
 	
 const unsigned char HUD[]={" Lives:  "}; // add tile 3 after this
+const unsigned char ACHOO[]={" ACHOO  "}; // add tile 3 after this
 // note, use palette 2 = 0xaa for first 8
 const unsigned char PALETTE[]={
 0x21, 0x08, 0x0A, 0x0f, //grass

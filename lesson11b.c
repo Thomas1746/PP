@@ -60,6 +60,8 @@ void title_loop()
 		Draw_Background();
 		X1 = 0x80; // starting position
 		Y1 = 0x70; // middle of screen
+		Room = 0;
+		Nametable = 0;
 		Reset_Scroll();
 
 		// was All_On(); changed to...

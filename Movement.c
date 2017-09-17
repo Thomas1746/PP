@@ -126,7 +126,6 @@ void move_logic(void)
 			NMI_flag = 0;
 			while (NMI_flag == 0)
 				; // wait till v-blank
-			audioReset();
 			// init game mode
 			All_Off();		 // turn off screen
 			PPU_CTRL = 0x90; // rightward increments to PPU
@@ -134,14 +133,14 @@ void move_logic(void)
 			
 			Set_Sprite_Zero();
 			Draw_Background();
+			Room = 0;
+			Nametable = 0;
 			X1 = 0x80; // starting position
 			Y1 = 0x70; // middle of screen
 			Reset_Scroll();
 	
 			// was All_On(); changed to...
 			PPU_CTRL = 0x91;
-			Room = 0;
-			Nametable = 0;
 		}
 		return;
 	} // if on platform, ++collision
