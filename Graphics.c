@@ -246,7 +246,7 @@ void New_Room(void)
 	A = Horiz_scroll_Plus >> 4;
 	if (Nametable_Plus == 0)
 	{ // load to right cmap
-		for (index = 0; index < 15; ++index)
+		for (index = 0; index < 16; ++index)
 		{
 			C_MAP2[A] = Room_Address[A];
 			A += 0x10;
@@ -254,7 +254,7 @@ void New_Room(void)
 	}
 	else
 	{ // load to the left cmap
-		for (index = 0; index < 15; ++index)
+		for (index = 0; index < 16; ++index)
 		{
 			C_MAP[A] = Room_Address[A];
 			A += 0x10;
@@ -266,7 +266,7 @@ void New_Room(void)
 	A = (Horiz_scroll_Plus + 0x10) >> 4;
 	if (Nametable_Plus == 0)
 	{ // load to right cmap
-		for (index = 0; index < 15; ++index)
+		for (index = 0; index < 16; ++index)
 		{
 			C_MAP2[A] = Room_Address[A];
 			A += 0x10;
@@ -274,7 +274,7 @@ void New_Room(void)
 	}
 	else
 	{ // load to the left cmap
-		for (index = 0; index < 15; ++index)
+		for (index = 0; index < 16; ++index)
 		{
 			C_MAP[A] = Room_Address[A];
 			A += 0x10;
