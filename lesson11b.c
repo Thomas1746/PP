@@ -95,6 +95,7 @@ void game_loop()
 			clearAchoo();
 		}
 	}
+	PPU_CTRL = 0x94;
 	PPU_ADDRESS = 0x20;
 	PPU_ADDRESS = 0x49;
 	PPU_DATA = lives + '0' + 32;
