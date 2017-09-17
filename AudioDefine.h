@@ -209,7 +209,7 @@ uchar titleMelodyC[][2] = {
 	{C4, 6},
 	{F4, 7},
 	{B4, 8},
-	{G4, 11},
+	{G4, 10},
 	{A4, 12}
 };
 uchar titleMelodyCPos = 0;
