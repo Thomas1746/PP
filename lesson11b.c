@@ -142,7 +142,7 @@ void death_loop()
 		while (NMI_flag == 0)
 			; // wait till v-blank
 		Game_Mode = TITLE_MODE;
-		audioReset();
+		//audioReset();
 		// init game mode
 		All_Off(); // turn off screen
 		Draw_Title();
