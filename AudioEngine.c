@@ -164,7 +164,6 @@ void bossaSong()
 			///////////////verse///////////////
 			case 0:
 			case 4:
-			case 12:
 			melodyOneTone = 0x80;
 			bassLen = 0xA8;
 			if(currentSemiQ == bossaBassA[bossaBassPos][1]){
@@ -179,7 +178,6 @@ void bossaSong()
 
 			case 1:
 			case 5:
-			case 13:
 			if(currentSemiQ == bossaBassA[bossaBassPos][1]){
 				playTri(bossaBassA[bossaBassPos][0]);
 				++bossaBassPos;
@@ -193,7 +191,6 @@ void bossaSong()
 
 			case 2:
 			case 6:
-			case 14:
 			if(currentSemiQ == bossaBassB[bossaBassPos][1]){
 				playTri(bossaBassB[bossaBassPos][0]);
 				++bossaBassPos;
@@ -207,7 +204,6 @@ void bossaSong()
 
 			case 3:
 			case 7:
-			case 15:
 			if(currentSemiQ == bossaBassA[bossaBassPos][1]){
 				playTri(bossaBassA[bossaBassPos][0]);
 				++bossaBassPos;
@@ -290,7 +286,7 @@ void bossaSong()
 		{
 			currentSemiQ = 0;
 			++currentBar;
-			if(currentBar == 16) currentBar = 0;
+			if(currentBar == 12) currentBar = 0;
 		}
 	}
 }
