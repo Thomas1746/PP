@@ -241,7 +241,7 @@ void Draw_Title(void)
 void New_Room(void)
 { // left column
 	RoomB = RoomPlus + 1;
-	RoomB &= 3;					 // keep it 0-3, we only have 4 rooms
+	RoomB &= NUM_LEVELS - 1;	// keep it 0 to NUM_LEVELS - 1
 	Room_Address = ROOMS[RoomB]; // get the address of the room data
 	A = Horiz_scroll_Plus >> 4;
 	if (Nametable_Plus == 0)
