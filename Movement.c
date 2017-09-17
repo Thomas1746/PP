@@ -98,7 +98,7 @@ void move_logic(void)
 	collision = collisionOld + collision;
 	collision_Index = (((char)Scroll_Adjusted_X >> 4) + ((Y1)&0xf0)); //top right
 	Collision_Down();												  // if on platform, ++collision
-	if (collision >= 50)
+	if (collision >= 51 || collisionBot >= 50)
 	{
 		playSpikes();
 		--lives;
