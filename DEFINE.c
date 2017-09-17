@@ -52,6 +52,7 @@ unsigned char joypad2test;
 unsigned char Room;
 unsigned char RoomB;
 unsigned char RoomPlus;
+unsigned char achooDrawn;
 const unsigned char *Room_Address; // is an int pointer, points to chars
 unsigned char Horiz_scroll; 
 unsigned char Horiz_scroll_Old; 

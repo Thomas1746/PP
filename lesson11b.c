@@ -111,7 +111,7 @@ void game_loop()
 	move_logic();
 	audioUpdate();
 	update_Sprites();
-
+	
 	// originally, I was drawing to opposite nametable, at the same
 	// position as Horiz_scroll, but I could see the changes a little, so I
 	// fixed that by drawing 0x20 pixels to the right of that
