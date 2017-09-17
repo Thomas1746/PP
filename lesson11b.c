@@ -81,6 +81,20 @@ void game_loop()
 	while (NMI_flag == 0)
 		; // wait till NMI
 
+	// Jump - we already figured if we are on a platform, only jump if on a platform
+	if (collisionBot > 0 && isSneezing != achooDrawn)
+	{
+		achooDrawn = isSneezing;
+		PPU_CTRL = 0x90; // rightward increments to PPU
+		if (isSneezing)
+		{
+			drawAchoo();
+		}
+		else
+		{
+			clearAchoo();
+		}
+	}
 	PPU_ADDRESS = 0x20;
 	PPU_ADDRESS = 0x49;
 	PPU_DATA = lives + '0' + 32;
@@ -111,7 +125,7 @@ void game_loop()
 	move_logic();
 	audioUpdate();
 	update_Sprites();
-	
+
 	// originally, I was drawing to opposite nametable, at the same
 	// position as Horiz_scroll, but I could see the changes a little, so I
 	// fixed that by drawing 0x20 pixels to the right of that

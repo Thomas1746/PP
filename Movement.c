@@ -178,26 +178,6 @@ void move_logic(void)
 	if (collisionBot > 0 && isSneezing) {
 		Y_speed = -0x68; // 0xc8
 	}
-	// Jump - we already figured if we are on a platform, only jump if on a platform
-	if (collisionBot > 0 && isSneezing != achooDrawn)
-	{
-		achooDrawn = isSneezing;
-		NMI_flag = 0;
-		while (NMI_flag == 0);			 // wait till v-blank
-		All_Off();		 // turn off screen
-		PPU_CTRL = 0x90; // rightward increments to PPU
-		if (isSneezing)
-		{
-			drawAchoo();
-		}
-		else
-		{
-			clearAchoo();
-		}
-
-		// was All_On(); changed to...
-		PPU_CTRL = 0x91;
-	}
 
 	// max speeds
 	if (X_speed >= 0)
