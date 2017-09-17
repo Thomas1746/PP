@@ -105,21 +105,23 @@ void move_logic(void)
 		NametableB = Nametable;
 		playSpikes();
 		--lives;
-		if (lives == 0) {
+		if (lives == 0)
+		{
 			NMI_flag = 0;
-			while (NMI_flag == 0); // wait till v-blank
+			while (NMI_flag == 0)
+				; // wait till v-blank
 			Game_Mode = GAME_OVER_MODE;
 			audioReset();
 			All_Off(); // turn off screen
 			Draw_Death();
-			
+
 			X1 = 0x80; // starting position
 			Y1 = 0x70; // middle of screen
 			Set_Sprite_Zero();
 			PPU_CTRL = 0x90; // rightward increments to PPU
 			Load_Palette();
 			Reset_Scroll();
-			
+
 			setupAudio();
 			Wait_Vblank();
 			All_On(); // turn on screen
@@ -161,7 +163,6 @@ void move_logic(void)
 		}
 	}
 
-
 	// max speeds
 	if (X_speed >= 0)
 	{ // going right
@@ -182,49 +183,56 @@ void move_logic(void)
 
 	// move
 	Horiz_scroll_Old = Horiz_scroll;
-	if (X_speed != 0)
+	X1_Old = X1;
+	if (X_speed > 0)
 	{
-		// move player
-		Horiz_scroll_Old = Horiz_scroll;
-		Horiz_scroll += (X_speed >> 4); // use the high nibble
-		// which nametable am I in?
-		NametableB = Nametable;
-		Scroll_Adjusted_X = (X1 + Horiz_scroll + (X_speed < 0 ? 3 : 13)); // left
-		high_byte = Scroll_Adjusted_X >> 8;
-		if (high_byte != 0)
-		{					 // if H scroll + Sprite X > 255, then we should use
-			++NametableB;	// the other nametable's collision map
-			NametableB &= 1; // keep it 0 or 1
-		}
-		// we want to find which metatile in the collision map this point is in...is it solid?
-		collision = 0;																				   // if on platform, ++collision
-		collision_Index = (((char)Scroll_Adjusted_X >> 4) + ((Y1 + 31) & 0xf0)); //top left if on ground / falling, bottom left if in air
-		Collision_Down();
-		collision_Index = (((char)Scroll_Adjusted_X >> 4) + ((Y1 + 16) & 0xf0)); //top left if on ground / falling, bottom left if in air
-		Collision_Down();
-		collision_Index = (((char)Scroll_Adjusted_X >> 4) + ((Y1)&0xf0)); //top left if on ground / falling, bottom left if in air
-		Collision_Down();
-		if (collision > 0)
+		if (X1 < 0x80)
 		{
-			Horiz_scroll = Horiz_scroll_Old;
-			X_speed = 0;
+			X1 += (X_speed >> 4); // use the high nibble
+			if (X1 > 0x80)
+				X1 = 0x80;
 		}
 		else
 		{
-			if (X_speed >= 0)
-			{										 // going right
-				if (Horiz_scroll_Old > Horiz_scroll) { // if pass 0, switch nametables
-					++Nametable;
-					++Room;
-				}
-			}
-			else
-			{ // going left
-				if (Horiz_scroll_Old < Horiz_scroll) {
-					++Nametable; // if pass 0, switch nametables
-					--Room;
-				}
-			}
+			Horiz_scroll += (X_speed >> 4); // use the high nibble
+		}
+	}
+	else
+	{						  // going left
+		X1 += (X_speed >> 4); // use the high nibble
+		if (X1 > 0xc0)
+			X1 = 0;
+	}
+	// which nametable am I in?
+	NametableB = Nametable;
+	Scroll_Adjusted_X = (X1 + Horiz_scroll + (X_speed < 0 ? 3 : 13)); // left
+	high_byte = Scroll_Adjusted_X >> 8;
+	if (high_byte != 0)
+	{					 // if H scroll + Sprite X > 255, then we should use
+		++NametableB;	// the other nametable's collision map
+		NametableB &= 1; // keep it 0 or 1
+	}
+	// we want to find which metatile in the collision map this point is in...is it solid?
+	collision = 0;															 // if on platform, ++collision
+	collision_Index = (((char)Scroll_Adjusted_X >> 4) + ((Y1 + 31) & 0xf0)); //top left if on ground / falling, bottom left if in air
+	Collision_Down();
+	collision_Index = (((char)Scroll_Adjusted_X >> 4) + ((Y1 + 16) & 0xf0)); //top left if on ground / falling, bottom left if in air
+	Collision_Down();
+	collision_Index = (((char)Scroll_Adjusted_X >> 4) + ((Y1)&0xf0)); //top left if on ground / falling, bottom left if in air
+	Collision_Down();
+	if (collision > 0)
+	{
+		X_speed = 0;
+		X1 = X1_Old;
+		Horiz_scroll = Horiz_scroll_Old;
+	}
+	else
+	{
+		// going right
+		if (Horiz_scroll_Old > Horiz_scroll)
+		{ // if pass 0, switch nametables
+			++Nametable;
+			++Room;
 		}
 	}
 
@@ -244,14 +252,13 @@ void move_logic(void)
 		walk_count = 0;
 
 	state = Walk_Moves[(walk_count >> 2)]; // if not jumping
-	if (X_speed == 0 && Y_speed == 0) 
+	if (X_speed == 0 && Y_speed == 0)
 		state = 2;
 	if (Y_speed < 0) // negative = jumping
 		state = 7;
 	if (Y_speed > 0) // negative = jumping
 		state = 6;
 }
-
 
 void Collision_Down(void)
 {

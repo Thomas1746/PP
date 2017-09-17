@@ -37,6 +37,7 @@ unsigned char index3;
 unsigned char index4;
 unsigned char lives;
 unsigned char X1;
+unsigned char X1_Old;
 unsigned char Y1;
 unsigned char state;
 unsigned char state4;
