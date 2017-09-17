@@ -134,8 +134,9 @@ void move_logic(void)
 			Load_HUD();
 			RoomPlus = 0;
 			Room = 0;
-			RoomB = 1;
+			RoomB = 0;
 			Nametable = 0;
+			Horiz_scroll = Horiz_scroll_Old = Horiz_scroll_Plus = 0;
 			Set_Sprite_Zero();
 			Draw_Background();
 			X1 = 0x80; // starting position
