@@ -110,10 +110,14 @@ unsigned char BUFFER7[8];	// final attribute table buffer
 #include "Levels/L4.csv"
 #include "Levels/L5.csv"
 #include "Levels/L6.csv"
+#include "Levels/L7.csv"
+#include "Levels/L8.csv"
+#include "Levels/L9.csv"
+#include "Levels/L10.csv"
 #include "BG/Title.h"
 #include "BG/death.h"
 
-const unsigned char * const ROOMS[]={L1, L2, L3, L4, L5, L6};
+const unsigned char * const ROOMS[]={L1, L2, L3, L4, L5, L6, L7, L8, L9, L10};
 
 // collision maps called A1-A4
 // now their value is 0-11, which will index to this array...

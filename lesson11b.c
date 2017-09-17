@@ -116,7 +116,7 @@ void game_loop()
 	{
 		++RoomPlus;
 		++Nametable_Plus;
-		RoomPlus %= NUM_LEVELS - 1;
+		RoomPlus %= NUM_LEVELS;
 		Nametable_Plus &= 1;
 	}
 
