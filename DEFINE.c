@@ -103,6 +103,7 @@ unsigned char BUFFER4[32];	// right column 2
 
 unsigned char BUFFER5[8];	// 1/2 bits of attribute table
 unsigned char BUFFER6[8];	// 1/2 bits of attribute table
+// Based on Doug Fraker's tutorial on https://nesdoug.com/
 unsigned char BUFFER7[8];	// final attribute table buffer
 
 #include "Levels/L1.csv"

@@ -1,4 +1,4 @@
 *.nes
 *.o
-lesson11b.s
+Main.s
 makefile

@@ -1,3 +1,4 @@
+// Based on Doug Fraker's tutorial on https://nesdoug.com/
 #include "DEFINE.c"
 #include "BufferMT.c"
 #include "AudioEngine.c"

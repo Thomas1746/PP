@@ -1,3 +1,4 @@
+# Sourced from Doug Fraker's tutorial on https://nesdoug.com/
 ; Startup code for cc65/ca65
 
 	.import _main
@@ -170,4 +171,4 @@ irq:
 
 .segment "CHARS"
 
-	.incbin "lesson10.chr"
+	.incbin "Main.chr"

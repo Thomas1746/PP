@@ -1,6 +1,6 @@
 @echo off
 
-set name="lesson11b"
+set name="Main"
 
 set path=%path%;..\bin\
 
